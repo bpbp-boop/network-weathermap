@@ -6,18 +6,18 @@ namespace Weathermap\Tests;
 
 use Weathermap\Core\FontTable;
 
-class FontTableTest extends \PHPUnit_Framework_TestCase
+class FontTableTest extends \PHPUnit\Framework\TestCase
 {
 
     protected $projectRoot;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->projectRoot = realpath(dirname(__FILE__) . "/../../../");
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
     }

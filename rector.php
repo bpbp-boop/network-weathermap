@@ -15,13 +15,15 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     // paths to refactor; solid alternative to CLI arguments
     $parameters->set(Option::PATHS, [
         __DIR__ . '/lib',
-        __DIR__ . '/test-suite',
     ]);
 
 
     // here we can define, what sets of rules will be applied
     $parameters->set(Option::SETS, [
-        SetList::CODE_QUALITY
+        SetList::CODE_QUALITY,
+        SetList::PHPUNIT_60,
+        SetList::PHPUNIT_70,
+        SetList::PHPUNIT_80
     ]);
 
     // get services

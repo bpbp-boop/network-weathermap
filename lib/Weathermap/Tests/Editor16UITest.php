@@ -7,7 +7,7 @@ namespace Weathermap\Tests;
 
 use Weathermap\Editor\EditorUI;
 
-class Editor16UITest extends \PHPUnit_Framework_TestCase
+class Editor16UITest extends \PHPUnit\Framework\TestCase
 {
     public function testInternals()
     {

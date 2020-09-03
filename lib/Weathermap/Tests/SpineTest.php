@@ -13,7 +13,7 @@ namespace Weathermap\Tests;
 use Weathermap\Core\Spine;
 use Weathermap\Core\Point;
 
-class SpineTest extends \PHPUnit_Framework_TestCase
+class SpineTest extends \PHPUnit\Framework\TestCase
 {
 
     public function testSimplify()

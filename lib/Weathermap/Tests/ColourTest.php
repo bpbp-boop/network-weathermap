@@ -10,7 +10,7 @@ namespace Weathermap\Tests;
 
 use Weathermap\Core\Colour;
 
-class ColourTest extends \PHPUnit_Framework_TestCase
+class ColourTest extends \PHPUnit\Framework\TestCase
 {
 
     public function testConstructors()
@@ -81,10 +81,10 @@ class ColourTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @throws \Exception
-     * @expectedException \Exception
      */
     public function testException()
     {
+        $this->expectException('Exception');
         new Colour("scooby");
     }
 }

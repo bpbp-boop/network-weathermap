@@ -5,11 +5,11 @@ namespace Weathermap\Tests;
 
 use Weathermap\Integrations\Cacti\WeatherMapCacti10ManagementPlugin;
 
-class Cacti10ManagementTest extends \PHPUnit_Framework_TestCase
+class Cacti10ManagementTest extends \PHPUnit\Framework\TestCase
 {
     private $object;
 
-    public function setUp()
+    public function setUp(): void
     {
         $dummyConfig = array("base_path" => "/tmp");
         $this->object = new WeatherMapCacti10ManagementPlugin($dummyConfig, $dummyConfig['base_path']."/plugins/weathermap");

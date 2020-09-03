@@ -12,10 +12,10 @@ use Weathermap\Core\BoundingBox;
 use Weathermap\Core\CatmullRom1D;
 use Weathermap\Core\MathUtility;
 
-class GeometryTest extends \PHPUnit_Framework_TestCase
+class GeometryTest extends \PHPUnit\Framework\TestCase
 {
 
-    protected function setUp()
+    protected function setUp(): void
     {
     }
 
@@ -229,7 +229,7 @@ class GeometryTest extends \PHPUnit_Framework_TestCase
         $line1 = new Line(new Point(50, 50), new Vector(1, 0));
         $line3 = new Line(new Point(70, 0), new Vector(1, 0));
 
-        $this->setExpectedException("Weathermap\\Core\\WeathermapInternalFail");
+        $this->expectException("Weathermap\\Core\\WeathermapInternalFail");
         $line1->findCrossingPoint($line3);
     }
 

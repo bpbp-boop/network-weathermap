@@ -10,7 +10,7 @@ namespace Weathermap\Tests;
 
 use Weathermap\UI\SimpleTemplate;
 
-class SimpleTemplateTest extends \PHPUnit_Framework_TestCase
+class SimpleTemplateTest extends \PHPUnit\Framework\TestCase
 {
     protected $projectRoot;
 
@@ -18,7 +18,7 @@ class SimpleTemplateTest extends \PHPUnit_Framework_TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->projectRoot = realpath(dirname(__FILE__) . "/../../../");
     }

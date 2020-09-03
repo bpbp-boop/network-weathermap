@@ -7,12 +7,12 @@ namespace Weathermap\Tests;
 use Weathermap\Core\Map;
 use Weathermap\Core\ConfigReader;
 
-class DocsTest extends \PHPUnit_Framework_TestCase
+class DocsTest extends \PHPUnit\Framework\TestCase
 {
     protected $projectRoot;
     protected $docsRoot;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->projectRoot = realpath(dirname(__FILE__) . "/../../../");
         $this->docsRoot = $this->projectRoot . "/docs/src/";

@@ -10,13 +10,13 @@ namespace Weathermap\Tests;
 
 use Weathermap\Core\HTMLImagemapAreaPolygon;
 
-class HTMLImagemapAreaPolygonTest extends \PHPUnit_Framework_TestCase
+class HTMLImagemapAreaPolygonTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Weathermap\Core\HTMLImagemapAreaPolygon|mixed
      */
     public $object;
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->object = new HTMLImagemapAreaPolygon(
             array(

@@ -7,7 +7,7 @@ namespace Weathermap\Tests;
 use Weathermap\Core\Map;
 use Weathermap\Core\ConfigReader;
 
-class ConfigReaderTest extends \PHPUnit_Framework_TestCase
+class ConfigReaderTest extends \PHPUnit\Framework\TestCase
 {
     public function testInternals()
     {

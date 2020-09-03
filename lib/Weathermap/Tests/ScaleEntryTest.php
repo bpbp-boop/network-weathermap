@@ -11,7 +11,7 @@ namespace Weathermap\Tests;
 use Weathermap\Core\ScaleEntry;
 use Weathermap\Core\Colour;
 
-class ScaleEntryTest extends \PHPUnit_Framework_TestCase
+class ScaleEntryTest extends \PHPUnit\Framework\TestCase
 {
 
     public function testGetColour()

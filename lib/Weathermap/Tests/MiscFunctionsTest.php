@@ -7,7 +7,7 @@ namespace Weathermap\Tests;
 use Weathermap\Core\MapUtility;
 use Weathermap\Core\StringUtility;
 
-class MiscFunctionsTest extends \PHPUnit_Framework_TestCase
+class MiscFunctionsTest extends \PHPUnit\Framework\TestCase
 {
 
     public function testStringHandling()
@@ -89,7 +89,6 @@ class MiscFunctionsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("1m", StringUtility::formatNumberWithMetricSuffix(0.001, 1000, 2));
         $this->assertEquals("1u", StringUtility::formatNumberWithMetricSuffix(0.000001, 1000, 2));
         $this->assertEquals("1n", StringUtility::formatNumberWithMetricSuffix(0.000000001, 1000, 2));
-
 
         $this->assertEquals("0.00", StringUtility::formatNumberWithMetricSuffix(0.0000000001, 1000, 2));
 

@@ -8,12 +8,12 @@ namespace Weathermap\Tests;
 use Weathermap\Editor\EditorUI;
 use \Weathermap\UI\UIBase;
 
-class EditorUITest extends \PHPUnit_Framework_TestCase
+class EditorUITest extends \PHPUnit\Framework\TestCase
 {
 
     protected $projectRoot;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->projectRoot = realpath(dirname(__FILE__) . "/../../../");
     }
@@ -105,10 +105,10 @@ class EditorUITest extends \PHPUnit_Framework_TestCase
 
     /**
      * @throws Weathermap\Core\WeathermapInternalFail
-     * @expectedException Weathermap\Core\WeathermapInternalFail
      */
     public function testValidateArgsException()
     {
+        $this->expectException('Weathermap\Core\WeathermapInternalFail');
         $ui = new EditorUI();
 
         // there is no type called 'black'

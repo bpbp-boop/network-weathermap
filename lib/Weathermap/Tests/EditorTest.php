@@ -10,7 +10,7 @@ require dirname(__FILE__) . '/../../all.php';
 
 use Weathermap\Editor\Editor;
 
-class EditorTest extends \PHPUnit_Framework_TestCase
+class EditorTest extends \PHPUnit\Framework\TestCase
 {
 
     protected static $testdir;
@@ -64,6 +64,9 @@ class EditorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("traflorkians", $newName, "Rename fails due to non-existing node");
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testNodeAdd()
     {
         $editor = new Editor();
@@ -80,6 +83,9 @@ class EditorTest extends \PHPUnit_Framework_TestCase
         fclose($fh);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testLinkAdd()
     {
         $editor = new Editor();
@@ -100,6 +106,9 @@ class EditorTest extends \PHPUnit_Framework_TestCase
         fclose($fh);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testNodeClone()
     {
         $editor = new Editor();
@@ -268,7 +277,7 @@ class EditorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(0, count($link->viaList));
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->projectRoot = realpath(dirname(__FILE__) . "/../../../");
 
@@ -286,7 +295,7 @@ class EditorTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         chdir(self::$previouswd);
     }

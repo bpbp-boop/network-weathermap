@@ -7,7 +7,7 @@ namespace Weathermap\Tests;
 //require_once dirname(__FILE__) . '/../lib/all.php';
 
 
-class ConfigTest extends \PHPUnit_Framework_TestCase
+class ConfigTest extends \PHPUnit\Framework\TestCase
 {
     protected static $testsDirectory;
     protected static $result1Directory;
@@ -227,12 +227,12 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         return $configList;
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         chdir(self::$previousWorkingDirectory);
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         global $WEATHERMAP_DEBUGGING;
 

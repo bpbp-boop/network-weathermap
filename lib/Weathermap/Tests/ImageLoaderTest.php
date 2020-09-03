@@ -13,12 +13,12 @@ namespace Weathermap\Tests;
 use Weathermap\Core\ImageLoader;
 use Weathermap\Core\ImageUtility;
 
-class ImageLoaderTest extends \PHPUnit_Framework_TestCase
+class ImageLoaderTest extends \PHPUnit\Framework\TestCase
 {
 
     protected $projectRoot;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->projectRoot = realpath(dirname(__FILE__) . "/../../../");
     }
@@ -48,6 +48,9 @@ class ImageLoaderTest extends \PHPUnit_Framework_TestCase
 
             $this->compareImages($src, $copy, $type);
         }
+
+        // dummy assert so rector leaves this class alone
+        self::assertEquals("", "");
     }
 
     public function testScaledCaching()
@@ -75,6 +78,9 @@ class ImageLoaderTest extends \PHPUnit_Framework_TestCase
 
             $this->compareImages($src, $copy, $type);
         }
+
+        // dummy assert so rector leaves this class alone
+        self::assertEquals("", "");
     }
 
     public function testDuplicate()
@@ -110,6 +116,9 @@ class ImageLoaderTest extends \PHPUnit_Framework_TestCase
 
             $this->compareImages($src, $copy, $type);
         }
+
+        // dummy assert so rector leaves this class alone
+        self::assertEquals("", "");
     }
 
     /**

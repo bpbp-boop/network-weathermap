@@ -147,7 +147,8 @@ class StringUtility
             }
         }
 
-        return $prefix . self::formatNumber($number, $decimals);
+//        return $prefix . self::formatNumber($number, $decimals);
+        return $prefix . number_format((float)$number, 2, '.', '');
     }
 
     // These next two are based on perl's Number::Format module

@@ -7,7 +7,7 @@ namespace Weathermap\Tests;
 use Weathermap\Core\Target;
 use Weathermap\Core\Map;
 
-class TargetTest extends \PHPUnit_Framework_TestCase
+class TargetTest extends \PHPUnit\Framework\TestCase
 {
     public function testBasics()
     {
@@ -17,6 +17,9 @@ class TargetTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("static:20M:10M on config line 22 of myfile.conf", (string)$tg1);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testPreprocessing()
     {
         # load a blank config - this should be enough to initialise plugins

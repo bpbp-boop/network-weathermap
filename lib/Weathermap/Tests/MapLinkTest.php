@@ -11,9 +11,12 @@ namespace Weathermap\Tests;
 use Weathermap\Core\MapLink;
 use Weathermap\Core\Map;
 
-class MapLinkTest extends \PHPUnit_Framework_TestCase
+class MapLinkTest extends \PHPUnit\Framework\TestCase
 {
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testInheritedFieldList()
     {
         $map = new Map();

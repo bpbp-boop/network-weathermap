@@ -450,9 +450,7 @@ class MapManager
         $statement->execute(array($mapId, $name));
         $setting = $statement->fetch(PDO::FETCH_OBJ);
 
-        $setting = $setting === false ? $defaultValue : $setting->optvalue;
-
-        return $setting;
+        return $setting === false ? $defaultValue : $setting->optvalue;
     }
 
     public function getMapSettingCount($mapId, $groupId = null)
@@ -657,6 +655,9 @@ class MapManager
         $columns = array();
         try {
             $rs = $this->pdo->query('SELECT * FROM ' . $tableName . ' LIMIT 0');
+            if (!$rs) {
+                return $columns;
+            }
             for ($i = 0; $i < $rs->columnCount(); $i++) {
                 $col = $rs->getColumnMeta($i);
                 $columns[] = $col['name'];
@@ -731,9 +732,9 @@ class MapManager
                                 data_source_name VARCHAR(19) NOT NULL,
                                 last_time INT(11) NOT NULL,
                                 last_value VARCHAR(190) NOT NULL,
-                                last_calc VARCHAR(190) NOT NULL, 
-                                sequence INT(11) NOT NULL, 
-                                local_data_id INT(11) NOT NULL DEFAULT 0, 
+                                last_calc VARCHAR(190) NOT NULL,
+                                sequence INT(11) NOT NULL,
+                                local_data_id INT(11) NOT NULL DEFAULT 0,
                                 last_used DATETIME DEFAULT '1900-01-01 00:00:00',
                                 PRIMARY KEY  (id), KEY rrdfile (rrdfile),
                                   KEY local_data_id (local_data_id), KEY data_source_name (data_source_name) ) ENGINE=Memory";

@@ -11,7 +11,7 @@ namespace Weathermap\Tests;
 
 use Weathermap\Core\Point;
 
-class PointTest extends \PHPUnit_Framework_TestCase
+class PointTest extends \PHPUnit\Framework\TestCase
 {
 
     public function testLERP()

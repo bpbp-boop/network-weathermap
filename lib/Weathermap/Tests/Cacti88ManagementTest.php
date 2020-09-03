@@ -5,11 +5,11 @@ namespace Weathermap\Tests;
 
 use Weathermap\Integrations\Cacti\WeatherMapCacti88ManagementPlugin;
 
-class Cacti88ManagementTest extends \PHPUnit_Framework_TestCase
+class Cacti88ManagementTest extends \PHPUnit\Framework\TestCase
 {
     private $object;
 
-    public function setUp()
+    public function setUp(): void
     {
         $dummyConfig = array("base_path" => "/tmp");
         $dummyColors = array();
