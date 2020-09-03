@@ -11,6 +11,10 @@ namespace Weathermap\UI;
  */
 class SimpleTemplate
 {
+    /**
+     * @var mixed
+     */
+    public $file;
     private $vars; /// Holds all the template variables
 
     /**

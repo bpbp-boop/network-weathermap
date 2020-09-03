@@ -373,7 +373,7 @@ class Map extends MapBase
         if (!isset($this->seenZLayers[$zIndex]) || !is_array($this->seenZLayers[$zIndex])) {
             $this->seenZLayers[$zIndex] = array();
         }
-        array_push($this->seenZLayers[$zIndex], $item);
+        $this->seenZLayers[$zIndex][] = $item;
     }
 
 
@@ -473,7 +473,7 @@ class Map extends MapBase
         $contextDescription = $this->getProcessStringContextName($context);
         $parts = explode(":", $keyContents);
         $type = array_shift($parts);
-        $args = join(":", $parts);
+        $args = implode(":", $parts);
 
         $partCount = count($parts);
 
@@ -556,7 +556,7 @@ class Map extends MapBase
      */
     private function processStringFindReferredObject(&$context, $itemname, $type)
     {
-        if (($itemname == "this") && ($type == strtolower($context->myType()))) {
+        if (($itemname == "this") && ($type === strtolower($context->myType()))) {
             return $context;
         }
 
@@ -671,7 +671,7 @@ class Map extends MapBase
     {
         // if we're running tests, we force the time to a particular value,
         // so the output can be compared to a reference image more easily
-        $testmode = intval($this->getHint('testmode'));
+        $testmode = (int) $this->getHint('testmode');
 
         if ($testmode == 1) {
             $maptime = 1270813792;
@@ -728,7 +728,7 @@ class Map extends MapBase
         // check if $input is more than one line. if it is, it's a text of a config file
         // if it isn't, it's the filename
 
-        if ((strchr($input, "\n") != false) || (strchr($input, "\r") != false)) {
+        if ((strstr($input, "\n") != false) || (strstr($input, "\r") != false)) {
             MapUtility::debug("ReadConfig Detected that this is a config fragment.\n");
             // strip out any Windows line-endings that have gotten in here
             $input = str_replace("\r", '', $input);
@@ -875,7 +875,7 @@ class Map extends MapBase
         foreach ($allItems as $mapItem) {
             if (!$mapItem->isTemplate() && count($mapItem->targets) > 0) {
                 $prefix = substr($mapItem->myType(), 0, 1);
-                fputs(
+                fwrite(
                     $fileHandle,
                     sprintf(
                         "%s\t%f\t%f\r\n",
@@ -908,7 +908,7 @@ class Map extends MapBase
         imagealphablending($imageRef, true);
 
         // Turn on anti-aliasing if it exists and it was requested
-        if ($this->getHint('antialias') == 1 and function_exists('imageantialias')) {
+        if ($this->getHint('antialias') == 1 && function_exists('imageantialias')) {
             imageantialias($imageRef, true);
         }
 
@@ -1046,11 +1046,7 @@ class Map extends MapBase
 
         // if one is specified, and we can, write a thumbnail too
         if ($thumbnailFileName != '') {
-            if ($this->width > $this->height) {
-                $factor = ($thumbnailMaxSize / $this->width);
-            } else {
-                $factor = ($thumbnailMaxSize / $this->height);
-            }
+            $factor = $this->width > $this->height ? $thumbnailMaxSize / $this->width : $thumbnailMaxSize / $this->height;
 
             $this->thumbWidth = $this->width * $factor;
             $this->thumbHeight = $this->height * $factor;
@@ -1159,15 +1155,12 @@ class Map extends MapBase
 
         if ($imageFileName == 'null') {
             // do nothing at all - we just wanted the HTML AREAs for the editor or HTML output
+        } elseif ($imageFileName == '') {
+            imagepng($imageRef);
         } else {
-            // write to the standard output (for the editor)
-            if ($imageFileName == '') {
-                imagepng($imageRef);
-            } else {
-                $this->writeImageFile($imageFileName, $imageRef);
-                if ($thumbnailFileName != '') {
-                    $this->createThumbnailFile($thumbnailFileName, $thumbnailMaxSize, $imageRef);
-                }
+            $this->writeImageFile($imageFileName, $imageRef);
+            if ($thumbnailFileName != '') {
+                $this->createThumbnailFile($thumbnailFileName, $thumbnailMaxSize, $imageRef);
             }
         }
 
@@ -1282,7 +1275,7 @@ class Map extends MapBase
 
                     // This needs to only modify the areas for the correct dir
                     foreach ($mapItem->imagemapAreas as $area) {
-                        if (array_key_exists('direction', $area->info) and $area->info['direction'] == $dir) {
+                        if (array_key_exists('direction', $area->info) && $area->info['direction'] == $dir) {
                             $area->extrahtml = $overlibhtml;
                         }
 
@@ -1299,7 +1292,7 @@ class Map extends MapBase
                 foreach ($dirs as $dir) {
                     if ($mapItem->infourl[$dir] != '') {
                         foreach ($mapItem->imagemapAreas as $area) {
-                            if (array_key_exists('direction', $area->info) and $area->info['direction'] == $dir) {
+                            if (array_key_exists('direction', $area->info) && $area->info['direction'] == $dir) {
                                 $area->href = $this->processString($mapItem->infourl[$dir], $mapItem);
                             }
                         }
@@ -1378,9 +1371,8 @@ class Map extends MapBase
             $note = str_replace('"', '&quot;', $note);
             $overlibhtml .= $note;
         }
-        $overlibhtml .= "',DELAY,250,${left}${above}CAPTION,'" . $caption . "');\"  onmouseout=\"return nd();\"";
 
-        return $overlibhtml;
+        return $overlibhtml . ("',DELAY,250,${left}${above}CAPTION,'" . $caption . "');\"  onmouseout=\"return nd();\"");
     }
 
     public function generateSortedImagemap($imagemapname)
@@ -1432,9 +1424,7 @@ class Map extends MapBase
             }
         }
 
-        $html .= '</map>';
-
-        return $html;
+        return $html . '</map>';
     }
 
 // *********************************************
@@ -1724,10 +1714,9 @@ class Map extends MapBase
         $write = false;
         $string = $keyword;
 
-        for ($i = 0; $i < count($fieldnames); $i++) {
-            $string .= ' ' . $object1->{$fieldnames[$i]};
-
-            if ($object1->{$fieldnames[$i]} != $object2[$fieldnames[$i]]) {
+        foreach ($fieldnames as $i => $fieldname) {
+            $string .= ' ' . $object1->{$fieldname};
+            if ($object1->{$fieldname} != $object2[$fieldname]) {
                 $write = true;
             }
         }
@@ -1774,7 +1763,7 @@ class Map extends MapBase
                 if ($param[2] == self::CONFIG_TYPE_COLOR) {
                     $output .= "$keyword " . $this->$field->asConfig() . "\n";
                 }
-                if ($param[2] == self::CONFIG_TYPE_LITERAL) {
+                if ($param[2] === self::CONFIG_TYPE_LITERAL) {
                     $output .= "$keyword " . $this->$field . "\n";
                 }
             }
@@ -1842,18 +1831,14 @@ class Map extends MapBase
                 $output .= "\n# ${description} ${name}s:\n";
 
                 foreach ($items as $item) {
-                    if (substr($item->name, 0, 3) != ':: ' && ($item->definedIn == $this->configfile)) {
-                        if ($template == $item->isTemplate()) {
-                            $output .= $item->getConfig();
-                        }
+                    if (substr($item->name, 0, 3) != ':: ' && ($item->definedIn == $this->configfile) && $template === $item->isTemplate()) {
+                        $output .= $item->getConfig();
                     }
                 }
             }
         }
 
-        $output .= "\n\n# That's All Folks!\n";
-
-        return $output;
+        return $output . "\n\n# That's All Folks!\n";
     }
 
     public function writeConfig($filename)

@@ -19,11 +19,7 @@ class GDFont extends Font
     {
         parent::__construct();
 
-        if (is_numeric($filename)) {
-            $this->loaded = $this->initGDBuiltin(intval($filename));
-        } else {
-            $this->loaded = $this->initGD($filename);
-        }
+        $this->loaded = is_numeric($filename) ? $this->initGDBuiltin((int) $filename) : $this->initGD($filename);
     }
 
     public function drawImageString($gdImage, $x, $y, $string, $colour, $angle = 0)
@@ -67,7 +63,7 @@ class GDFont extends Font
     {
         $gdFontID = imageloadfont($filename);
 
-        if ($gdFontID) {
+        if ($gdFontID !== 0) {
             $this->gdnumber = $gdFontID;
             $this->file = $filename;
             $this->type = 'gd';

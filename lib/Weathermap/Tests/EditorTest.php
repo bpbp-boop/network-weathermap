@@ -76,7 +76,7 @@ class EditorTest extends \PHPUnit_Framework_TestCase
         $c = $editor->getConfig();
 
         $fh = fopen(self::$result1dir . DIRECTORY_SEPARATOR . "editortest-addnode.conf", "w");
-        fputs($fh, $c);
+        fwrite($fh, $c);
         fclose($fh);
     }
 
@@ -96,7 +96,7 @@ class EditorTest extends \PHPUnit_Framework_TestCase
         $c = $editor->getConfig();
 
         $fh = fopen(self::$result1dir . DIRECTORY_SEPARATOR . "editortest-addlink.conf", "w");
-        fputs($fh, $c);
+        fwrite($fh, $c);
         fclose($fh);
     }
 
@@ -115,7 +115,7 @@ class EditorTest extends \PHPUnit_Framework_TestCase
         $c = $editor->getConfig();
 
         $fh = fopen(self::$result1dir . DIRECTORY_SEPARATOR . "editortest-clone.conf", "w");
-        fputs($fh, $c);
+        fwrite($fh, $c);
         fclose($fh);
     }
 
@@ -137,24 +137,24 @@ class EditorTest extends \PHPUnit_Framework_TestCase
         $editor->addLink("node1", "node2");
 
         $nDeps = $n1->getDependencies();
-        $nDepsString = join(" ", array_map(array("Weathermap\\Tests\\EditorTest", "makeString"), $nDeps));
+        $nDepsString = implode(" ", array_map(array("Weathermap\\Tests\\EditorTest", "makeString"), $nDeps));
         $this->assertEquals("[LINK node1-node2]", $nDepsString, "Dependency created for new link");
 
         $editor->addLink("node1", "node3");
 
         $nDeps = $n1->getDependencies();
-        $nDepsString = join(" ", array_map(array("Weathermap\\Tests\\EditorTest", "makeString"), $nDeps));
+        $nDepsString = implode(" ", array_map(array("Weathermap\\Tests\\EditorTest", "makeString"), $nDeps));
         $this->assertEquals("[LINK node1-node2] [LINK node1-node3]", $nDepsString, "Two dependencies with two links");
 
         $link = $editor->map->getLink("node1-node2");
         $link->setEndNodes($n2, $n3);
 
         $nDeps = $n1->getDependencies();
-        $nDepsString = join(" ", array_map(array("Weathermap\\Tests\\EditorTest", "makeString"), $nDeps));
+        $nDepsString = implode(" ", array_map(array("Weathermap\\Tests\\EditorTest", "makeString"), $nDeps));
         $this->assertEquals("[LINK node1-node3]", $nDepsString, "Dependency removed when link moves");
 
         $nDeps = $n2->getDependencies();
-        $nDepsString = join(" ", array_map(array("Weathermap\\Tests\\EditorTest", "makeString"), $nDeps));
+        $nDepsString = implode(" ", array_map(array("Weathermap\\Tests\\EditorTest", "makeString"), $nDeps));
         $this->assertEquals("[LINK node1-node2]", $nDepsString, "Dependency added when link moves");
     }
 

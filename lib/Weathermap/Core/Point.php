@@ -26,10 +26,7 @@ class Point
      */
     public function identical($point2)
     {
-        if (($this->x == $point2->x) && ($this->y == $point2->y)) {
-            return true;
-        }
-        return false;
+        return ($this->x == $point2->x) && ($this->y == $point2->y);
     }
 
     public function set($newX, $newY)
@@ -55,10 +52,7 @@ class Point
      */
     public function closeEnough($point2)
     {
-        if ((round($this->x, 2) == round($point2->x, 2)) && (round($this->y, 2) == round($point2->y, 2))) {
-            return true;
-        }
-        return false;
+        return (round($this->x, 2) === round($point2->x, 2)) && (round($this->y, 2) === round($point2->y, 2));
     }
 
     /**
@@ -67,9 +61,7 @@ class Point
      */
     public function vectorToPoint($p2)
     {
-        $v = new Vector($p2->x - $this->x, $p2->y - $this->y);
-
-        return $v;
+        return new Vector($p2->x - $this->x, $p2->y - $this->y);
     }
 
     public function lineToPoint($p2)
@@ -116,8 +108,8 @@ class Point
             return $this;
         }
 
-        $this->x = $this->x + $fraction * $v->dx;
-        $this->y = $this->y + $fraction * $v->dy;
+        $this->x += $fraction * $v->dx;
+        $this->y += $fraction * $v->dy;
 
         return $this;
     }
@@ -134,9 +126,7 @@ class Point
         $newX = (1 - $ratio) * $this->x + $ratio * ($point2->x);
         $newY = (1 - $ratio) * $this->y + $ratio * ($point2->y);
 
-        $newPoint = new Point($newX, $newY);
-
-        return $newPoint;
+        return new Point($newX, $newY);
     }
 
     public function asString()
@@ -180,10 +170,10 @@ class Point
      */
     public function rotatePointsAround($points, $radiansAngle = 0)
     {
-        for ($i = 0; $i < count($points); $i++) {
+        foreach ($points as $i => $point) {
             // translate so that this point is the origin
-            $deltaX = $points[$i]->x - $this->x;
-            $deltaY = $points[$i]->y - $this->y;
+            $deltaX = $point->x - $this->x;
+            $deltaY = $point->y - $this->y;
             // rotate about origin, and translate back
             $points[$i]->x = $deltaX * cos($radiansAngle) - $deltaY * sin($radiansAngle) + $this->x;
             $points[$i]->y = $deltaY * cos($radiansAngle) + $deltaX * sin($radiansAngle) + $this->y;

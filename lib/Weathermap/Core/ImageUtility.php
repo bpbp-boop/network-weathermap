@@ -155,7 +155,7 @@ class ImageUtility
         if (array_key_exists($type, $conversion)) {
             list($typeBitfield, $typeName, $failureMessage, $loadFunction) = $conversion[$type];
 
-            if (!(imagetypes() & $typeBitfield)) {
+            if ((imagetypes() & $typeBitfield) === 0) {
                 MapUtility::warn($failureMessage);
 
                 return $imageRef;
@@ -252,7 +252,7 @@ class ImageUtility
 
         // Input color luminosity: this is equivalent to the
         // position of the input color in the monochromatic palette 765=255*3
-        $inputLuminosity = intval(round(255 * ($red + $green + $blue) / 765));
+        $inputLuminosity = (int) round(255 * ($red + $green + $blue) / 765);
 
         // We fill the palette entry with the input color at its
         // corresponding position
@@ -270,7 +270,7 @@ class ImageUtility
         $stepsToBlack = $inputLuminosity;
 
         // The step size for each component
-        if ($stepsToBlack) {
+        if ($stepsToBlack !== 0) {
             $stepSizeRed = $red / $stepsToBlack;
             $stepSizeGreen = $green / $stepsToBlack;
             $stepSizeBlue = $blue / $stepsToBlack;
@@ -289,7 +289,7 @@ class ImageUtility
 
         $stepSizeRed = $stepSizeGreen = $stepSizeBlue = 0;
 
-        if ($stepsToWhite) {
+        if ($stepsToWhite !== 0) {
             $stepSizeRed = (255 - $red) / $stepsToWhite;
             $stepSizeGreen = (255 - $green) / $stepsToWhite;
             $stepSizeBlue = (255 - $blue) / $stepsToWhite;

@@ -48,7 +48,7 @@ class Utility
             return true;
         }
 
-        $value = intval($value);
+        $value = (int) $value;
 
         // Cron allows for multiple comma separated clauses, so let's break them
         // up first, and evaluate each one.
@@ -62,7 +62,7 @@ class Utility
 
             // an interval - e.g. */5
             if (1 === preg_match('/\*\/(\d+)/', $part, $matches)) {
-                $mod = intval($matches[1]);
+                $mod = (int) $matches[1];
 
                 if (($value % $mod) === 0) {
                     return true;
@@ -70,10 +70,8 @@ class Utility
             }
 
             // a range - e.g. 4-7
-            if (1 === preg_match('/(\d+)\-(\d+)/', $part, $matches)) {
-                if (($value >= intval($matches[1])) && ($value <= intval($matches[2]))) {
-                    return true;
-                }
+            if (1 === preg_match('/(\d+)\-(\d+)/', $part, $matches) && (($value >= (int) $matches[1]) && ($value <= (int) $matches[2]))) {
+                return true;
             }
         }
 
@@ -95,8 +93,7 @@ class Utility
         $matched = $matched && Utility::testCronPart($localTime['tm_hour'], $hour);
         $matched = $matched && Utility::testCronPart($localTime['tm_wday'], $wday);
         $matched = $matched && Utility::testCronPart($localTime['tm_mday'], $day);
-        $matched = $matched && Utility::testCronPart($localTime['tm_mon'] + 1, $month);
 
-        return $matched;
+        return $matched && Utility::testCronPart($localTime['tm_mon'] + 1, $month);
     }
 }

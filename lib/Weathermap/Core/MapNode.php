@@ -157,11 +157,7 @@ class MapNode extends MapDataItem
 
     public function hasArtificialIcon()
     {
-        if ($this->iconfile == 'rbox' || $this->iconfile == 'box' || $this->iconfile == 'round' || $this->iconfile == 'inpie' || $this->iconfile == 'outpie' || $this->iconfile == 'gauge' || $this->iconfile == 'nink') {
-            return true;
-        }
-
-        return false;
+        return $this->iconfile == 'rbox' || $this->iconfile == 'box' || $this->iconfile == 'round' || $this->iconfile == 'inpie' || $this->iconfile == 'outpie' || $this->iconfile == 'gauge' || $this->iconfile == 'nink';
     }
 
     /**
@@ -392,7 +388,7 @@ class MapNode extends MapDataItem
             $newArea = new HTMLImagemapAreaRectangle(array($bbox), $areaName, '');
             // it doesn't really matter which, but it needs to have SOME direction
             $newArea->info['direction'] = IN;
-            MapUtility::debug('Adding imagemap area [' . join(',', $bbox) . "] => $newArea \n");
+            MapUtility::debug('Adding imagemap area [' . implode(',', $bbox) . "] => $newArea \n");
             $this->imagemapAreas[] = $newArea;
             $index++;
         }
@@ -511,14 +507,14 @@ class MapNode extends MapDataItem
         }
 
         if ($this->overliburl[IN] != $templateSource->overliburl[IN]) {
-            $output .= "\tOVERLIBGRAPH " . join(' ', $this->overliburl[IN]) . "\n";
+            $output .= "\tOVERLIBGRAPH " . implode(' ', $this->overliburl[IN]) . "\n";
         }
 
         $val = $this->iconscalew . ' ' . $this->iconscaleh . ' ' . $this->iconfile;
 
         $comparison = $templateSource->iconscalew . ' ' . $templateSource->iconscaleh . ' ' . $templateSource->iconfile;
 
-        if ($val != $comparison) {
+        if ($val !== $comparison) {
             $output .= "\tICON ";
             if ($this->iconscalew > 0) {
                 $output .= $this->iconscalew . ' ' . $this->iconscaleh . ' ';
@@ -526,7 +522,7 @@ class MapNode extends MapDataItem
             $output .= ($this->iconfile == '' ? 'none' : $this->iconfile) . "\n";
         }
 
-        if ($this->targets != $templateSource->targets) {
+        if ($this->targets !== $templateSource->targets) {
             $output .= "\tTARGET";
 
             foreach ($this->targets as $target) {
@@ -539,38 +535,36 @@ class MapNode extends MapDataItem
         $val = $this->usescale . ' ' . $this->scalevar . ' ' . $this->scaletype;
         $comparison = $templateSource->usescale . ' ' . $templateSource->scalevar . ' ' . $templateSource->scaletype;
 
-        if (($val != $comparison)) {
+        if (($val !== $comparison)) {
             $output .= "\tUSESCALE " . $val . "\n";
         }
 
         $val = $this->useiconscale . ' ' . $this->iconscalevar;
         $comparison = $templateSource->useiconscale . ' ' . $templateSource->iconscalevar;
 
-        if ($val != $comparison) {
+        if ($val !== $comparison) {
             $output .= "\tUSEICONSCALE " . $val . "\n";
         }
 
         $val = $this->labeloffsetx . ' ' . $this->labeloffsety;
         $comparison = $templateSource->labeloffsetx . ' ' . $templateSource->labeloffsety;
 
-        if ($comparison != $val) {
+        if ($comparison !== $val) {
             $output .= "\tLABELOFFSET " . $val . "\n";
         }
 
         $val = $this->x . ' ' . $this->y;
         $comparison = $templateSource->x . ' ' . $templateSource->y;
 
-        if ($val != $comparison) {
+        if ($val !== $comparison) {
             if ($this->positionRelativeTo == '') {
                 $output .= "\tPOSITION " . $val . "\n";
+            } elseif ($this->polar) {
+                $output .= "\tPOSITION " . $this->positionRelativeTo . ' ' . $this->originalX . 'r' . $this->originalY . "\n";
+            } elseif ($this->positionedByNamedOffset) {
+                $output .= "\tPOSITION " . $this->positionRelativeTo . ':' . $this->positionRelativeToNamedOffset . "\n";
             } else {
-                if ($this->polar) {
-                    $output .= "\tPOSITION " . $this->positionRelativeTo . ' ' . $this->originalX . 'r' . $this->originalY . "\n";
-                } elseif ($this->positionedByNamedOffset) {
-                    $output .= "\tPOSITION " . $this->positionRelativeTo . ':' . $this->positionRelativeToNamedOffset . "\n";
-                } else {
-                    $output .= "\tPOSITION " . $this->positionRelativeTo . ' ' . $this->originalX . ' ' . $this->originalY . "\n";
-                }
+                $output .= "\tPOSITION " . $this->positionRelativeTo . ' ' . $this->originalX . ' ' . $this->originalY . "\n";
             }
         }
 
@@ -640,11 +634,7 @@ class MapNode extends MapDataItem
 
     public function isRelativePositioned()
     {
-        if ($this->positionRelativeTo != '') {
-            return true;
-        }
-
-        return false;
+        return $this->positionRelativeTo != '';
     }
 
     public function getRelativeAnchor()
@@ -826,14 +816,11 @@ class MapNode extends MapDataItem
                     $this->iconscaleh
                 );
             }
-
             if (!$iconImageRef) {
                 MapUtility::warn("Couldn't open ICON: '" . $this->iconfile . "' - is it a PNG, JPEG or GIF? [WMWARN37]\n");
             }
-        } else {
-            if ($this->iconfile != 'none') {
-                MapUtility::warn("ICON '" . $this->iconfile . "' does not exist, or is not readable. Check path and permissions. [WMARN38]\n");
-            }
+        } elseif ($this->iconfile != 'none') {
+            MapUtility::warn("ICON '" . $this->iconfile . "' does not exist, or is not readable. Check path and permissions. [WMARN38]\n");
         }
         return $iconImageRef;
     }
@@ -1235,10 +1222,8 @@ class MapNode extends MapDataItem
         if ($this->useiconscale == 'none') {
             if ($configuredAIFillColour->isCopy() && !$labelColour->isNone()) {
                 $finalFillColour = $labelColour;
-            } else {
-                if ($configuredAIFillColour->isRealColour()) {
-                    $finalFillColour = $configuredAIFillColour;
-                }
+            } elseif ($configuredAIFillColour->isRealColour()) {
+                $finalFillColour = $configuredAIFillColour;
             }
         } else {
             // if useiconscale IS defined, use that to figure out the fill colour
@@ -1250,10 +1235,8 @@ class MapNode extends MapDataItem
         if (!$configuredAIOutlineColour->isNone()) {
             if ($configuredAIOutlineColour->isCopy() && !$labelColour->isNone()) {
                 $finalInkColour = $labelColour;
-            } else {
-                if ($configuredAIOutlineColour->isRealColour()) {
-                    $finalInkColour = $configuredAIOutlineColour;
-                }
+            } elseif ($configuredAIOutlineColour->isRealColour()) {
+                $finalInkColour = $configuredAIOutlineColour;
             }
         }
         return array($finalFillColour, $finalInkColour);

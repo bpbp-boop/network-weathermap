@@ -59,7 +59,7 @@ class WeathermapData extends Base
                     }
                 }
 
-                if ($found === true) {
+                if ($found) {
                     $stats = stat($datafile);
                     $this->dataTime = $stats['mtime'];
                 } else {

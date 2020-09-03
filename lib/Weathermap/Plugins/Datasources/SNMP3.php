@@ -93,12 +93,7 @@ class SNMP3 extends Base
         if ($this->abortCount == 0) {
             return false;
         }
-
-        if (!isset($this->downCache[$host]) || intval($this->downCache[$host]) < $this->abortCount) {
-            return false;
-        }
-
-        return true;
+        return isset($this->downCache[$host]) && (int) $this->downCache[$host] >= $this->abortCount;
     }
 
     public function readData($targetString, &$map, &$mapItem)
@@ -160,7 +155,7 @@ class SNMP3 extends Base
             }
         } else {
             // if they are to be copied from a Cacti profile...
-            $import = intval($import);
+            $import = (int) $import;
             MapUtility::debug("SNMPv3 ReadData: will try to import profile $profileName from Cacti host id $import\n");
 
             $params = $this->copyParamsFromCacti($profileName, $import);
@@ -313,9 +308,9 @@ class SNMP3 extends Base
      */
     private function getMapGlobals()
     {
-        $this->timeout = intval($this->owner->getHint("snmp_timeout", 1000000));
-        $this->abortCount = intval($this->owner->getHint("snmp_abort_count", 0));
-        $this->retryCount = intval($this->owner->getHint("snmp_retries", 2));
+        $this->timeout = (int) $this->owner->getHint("snmp_timeout", 1000000);
+        $this->abortCount = (int) $this->owner->getHint("snmp_abort_count", 0);
+        $this->retryCount = (int) $this->owner->getHint("snmp_retries", 2);
 
         MapUtility::debug("Timeout changed to " . $this->timeout . " microseconds.\n");
         MapUtility::debug("Will abort after $this->abortCount failures for a given host.\n");

@@ -51,7 +51,7 @@ class RRDTool extends Base
             $map->addHint("cacti_url", $config['url_path']);
         }
 
-        $this->rrdUsePollerOutput = intval($map->getHint('rrd_use_poller_output'));
+        $this->rrdUsePollerOutput = (int) $map->getHint('rrd_use_poller_output');
 
         # Are we in Cacti?
         if ($this->rrdUsePollerOutput && $map->context != 'cacti') {
@@ -84,11 +84,11 @@ class RRDTool extends Base
     {
         // If we're using poller_output, update the last_used date for the data we actually used
         // (the poller can then expire old entries periodically)
-        if (count($this->localDataIDsSeen)) {
+        if (count($this->localDataIDsSeen) > 0) {
             MapUtility::warn("Updating weathermap_data for last_seen time");
             $idGroups = array_chunk(array_keys($this->localDataIDsSeen), 50);
             foreach ($idGroups as $group) {
-                $SQL = "update weathermap_data set last_used=now() where local_data_id in (" . join(",", $group) . ")";
+                $SQL = "update weathermap_data set last_used=now() where local_data_id in (" . implode(",", $group) . ")";
                 db_execute($SQL);
             }
         }
@@ -138,7 +138,7 @@ class RRDTool extends Base
                         }
                         if (count($fields) > 0) {
                             MapUtility::warn(
-                                "RRD ReadData: poller_output: " . $dsnames[$dir] . " is not a valid DS name for $databaseRRDName - valid names are: " . join(
+                                "RRD ReadData: poller_output: " . $dsnames[$dir] . " is not a valid DS name for $databaseRRDName - valid names are: " . implode(
                                     ", ",
                                     $fields
                                 ) . " [WMRRD07]\n"
@@ -243,7 +243,7 @@ class RRDTool extends Base
 
         $command = $map->rrdtool;
         foreach ($args as $arg) {
-            if (strchr($arg, " ") != false) {
+            if (strstr($arg, " ") != false) {
                 $command .= ' "' . $arg . '"';
             } else {
                 $command .= ' ' . $arg;
@@ -334,7 +334,7 @@ class RRDTool extends Base
 
         $command = $map->rrdtool;
         foreach ($args as $arg) {
-            if (strchr($arg, " ") != false) {
+            if (strstr($arg, " ") != false) {
                 $command .= ' "' . $arg . '"';
             } else {
                 $command .= ' ' . $arg;
@@ -408,7 +408,7 @@ class RRDTool extends Base
 
                 if ($dataOk) {
                     // at least one of the named DS had good data
-                    $this->dataTime = intval($values['timestamp']);
+                    $this->dataTime = (int) $values['timestamp'];
 
                     // 'fix' a -1 value to 0, so the whole thing is valid
                     // (this needs a proper fix!)
@@ -425,7 +425,7 @@ class RRDTool extends Base
             }
         } else {
             // report DS name error
-            $names = join(",", $heads);
+            $names = implode(",", $heads);
             $names = str_replace("timestamp,", "", $names);
             MapUtility::warn("RRD ReadData: At least one of your DS names (" . $dsnames[IN] . " and " . $dsnames[OUT] . ") were not found, even though there was a valid data line. Maybe they are wrong? Valid DS names in this file are: $names [WMRRD06]\n");
         }
@@ -494,7 +494,7 @@ class RRDTool extends Base
             $cfname = 'AVERAGE';
         }
 
-        $period = intval($map->getHint('rrd_period'));
+        $period = (int) $map->getHint('rrd_period');
         if ($period == 0) {
             $period = 800;
         }
@@ -506,8 +506,8 @@ class RRDTool extends Base
             $end = "start+" . $period;
         }
 
-        $usePollerOutput = intval($this->rrdUsePollerOutput);
-        $nowarnOnPollerOutputAggregate = intval($map->getHint("nowarn_rrd_poller_output_aggregation"));
+        $usePollerOutput = (int) $this->rrdUsePollerOutput;
+        $nowarnOnPollerOutputAggregate = (int) $map->getHint("nowarn_rrd_poller_output_aggregation");
         $aggregateFunction = $map->getHint('rrd_aggregate_function');
 
         if ($aggregateFunction != '' && $usePollerOutput == 1) {

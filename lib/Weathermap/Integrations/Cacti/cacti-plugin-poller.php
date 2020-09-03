@@ -94,15 +94,12 @@ function weathermap_poller_output($rrdUpdateArray)
                         if ($value >= $lastval) {
                             // Everything is normal
                             $newvalue = $value - $lastval;
+                        } elseif ($lastval > 4294967295) {
+                            $newvalue = (18446744073709551615 - $lastval) + $value;
                         } else {
-                            // Possible overflow, see if its 32bit or 64bit
-                            if ($lastval > 4294967295) {
-                                $newvalue = (18446744073709551615 - $lastval) + $value;
-                            } else {
-                                $newvalue = (4294967295 - $lastval) + $value;
-                            }
+                            $newvalue = (4294967295 - $lastval) + $value;
                         }
-                        $newvalue = $newvalue / $period;
+                        $newvalue /= $period;
                         break;
 
                     case 3: //DERIVE
@@ -167,21 +164,17 @@ function weathermap_poller_bottom()
         if (($renderperiod == 0) || (($rendercounter % $renderperiod) == 0)) {
             // TODO: This is horrible!
             $baseDir = dirname(dirname(dirname(dirname(dirname(__FILE__)))));
-
             // TODO: this will replace poller-common/runMaps
             $poller = new \Weathermap\Poller\Poller($baseDir, $app, $weathermapPollerStartTime);
             $poller->preFlight();
-//            $poller->run();
-
+            //            $poller->run();
             \Weathermap\Poller\runMaps($baseDir);
-        } else {
-            if ($quietlogging == 0) {
-                \cacti_log(
-                    "Weathermap " . WEATHERMAP_VERSION . " - no update in this cycle ($rendercounter)",
-                    true,
-                    "WEATHERMAP"
-                );
-            }
+        } elseif ($quietlogging == 0) {
+            \cacti_log(
+                "Weathermap " . WEATHERMAP_VERSION . " - no update in this cycle ($rendercounter)",
+                true,
+                "WEATHERMAP"
+            );
         }
         // increment the counter
         $newcount = ($rendercounter + 1) % 1000;

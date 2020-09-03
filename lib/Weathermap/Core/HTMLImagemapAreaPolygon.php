@@ -23,7 +23,7 @@ class HTMLImagemapAreaPolygon extends HTMLImagemapArea
             $flatpoints[] = $point[0];
             $flatpoints[] = $point[1];
         }
-        $coordstring = join(',', $flatpoints);
+        $coordstring = implode(',', $flatpoints);
 
         return '<area ' . $this->commonHTML() . 'shape="poly" coords="' . $coordstring . '" />';
     }
@@ -85,14 +85,15 @@ class HTMLImagemapAreaPolygon extends HTMLImagemapArea
         $this->href = $href;
         $this->npoints = count($c) / 2;
 
-        if (intval($this->npoints) != ($this->npoints)) {
+        if ((int) $this->npoints != $this->npoints) {
             throw new \Exception('Odd number of points!');
         }
 
         $xlist = array();
         $ylist = array();
+        $cCount = count($c);
 
-        for ($i = 0; $i < count($c); $i += 2) {
+        for ($i = 0; $i < $cCount; $i += 2) {
             $x = round($c[$i]);
             $y = round($c[$i + 1]);
             $point = array($x, $y);

@@ -109,9 +109,8 @@ class WeatherMapCactiUserPlugin extends UIBase
         foreach ($params as $name => $value) {
             $parts [] = urlencode($name) . "=" . urlencode($value);
         }
-        $url .= join("&", $parts);
 
-        return $url;
+        return $url . implode("&", $parts);
     }
 
     public function handleMapListAPI($request, $appObject)
@@ -214,14 +213,9 @@ class WeatherMapCactiUserPlugin extends UIBase
         if (isset($user_auth_realm_filenames[$realmName])) {
             $realmId = $user_auth_realm_filenames[$realmName];
         }
-        $userid = (isset($_SESSION["sess_user_id"]) ? intval($_SESSION["sess_user_id"]) : 1);
+        $userid = (isset($_SESSION["sess_user_id"]) ? (int) $_SESSION["sess_user_id"] : 1);
         $allowed = $this->manager->application->checkUserAccess($userid, $realmId);
-
-        if ($allowed || (empty($realmId))) {
-            return true;
-        }
-
-        return false;
+        return $allowed || (empty($realmId));
     }
 
 
@@ -448,7 +442,7 @@ class WeatherMapCactiUserPlugin extends UIBase
             print "<p></p><table class='tabs' width='100%' cellspacing='0' cellpadding='3' align='center'><tr>\n";
 
             if (count($tabs) > 0) {
-                $showAll = intval($this->manager->application->getAppSetting("weathermap_all_tab", 0));
+                $showAll = (int) $this->manager->application->getAppSetting("weathermap_all_tab", 0);
                 if ($showAll == 1) {
                     $tabs['-2'] = "All Maps";
                 }

@@ -20,12 +20,7 @@ class ImageLoader
         if (!$this->cacheEnabled) {
             return false;
         }
-
-        if ($width * $height > 65536) {
-            return false;
-        }
-
-        return true;
+        return !($width * $height) <= !65536;
     }
 
     /**
@@ -158,7 +153,7 @@ class ImageLoader
 
                 switch ($type) {
                     case IMAGETYPE_GIF:
-                        if (imagetypes() & IMG_GIF) {
+                        if ((imagetypes() & IMG_GIF) !== 0) {
                             MapUtility::debug("Load gif\n");
                             $newImage = imagecreatefromgif($filename);
                         } else {
@@ -167,7 +162,7 @@ class ImageLoader
                         break;
 
                     case IMAGETYPE_JPEG:
-                        if (imagetypes() & IMG_JPEG) {
+                        if ((imagetypes() & IMG_JPEG) !== 0) {
                             MapUtility::debug("Load jpg\n");
                             $newImage = imagecreatefromjpeg($filename);
                         } else {
@@ -176,7 +171,7 @@ class ImageLoader
                         break;
 
                     case IMAGETYPE_PNG:
-                        if (imagetypes() & IMG_PNG) {
+                        if ((imagetypes() & IMG_PNG) !== 0) {
                             MapUtility::debug("Load png\n");
                             $newImage = imagecreatefrompng($filename);
                         } else {
@@ -219,11 +214,7 @@ class ImageLoader
 
         if ($scaleWidth > 0 && $scaleHeight > 0) {
             MapUtility::debug("SCALING ICON here\n");
-            if ($iconWidth > $iconHeight) {
-                $scaleFactor = $iconWidth / $scaleWidth;
-            } else {
-                $scaleFactor = $iconHeight / $scaleHeight;
-            }
+            $scaleFactor = $iconWidth > $iconHeight ? $iconWidth / $scaleWidth : $iconHeight / $scaleHeight;
             if ($scaleFactor != 1.0) {
                 $newWidth = $iconWidth / $scaleFactor;
                 $newHeight = $iconHeight / $scaleFactor;
@@ -252,11 +243,9 @@ class ImageLoader
         if ($this->isCacheable($scaleWidth, $scaleHeight)) {
             MapUtility::debug("Caching [$key]=$iconImageRef\n");
             $this->cache[$key] = $iconImageRef;
-            $finalImageRef = $this->imageduplicate($iconImageRef);
-            return $finalImageRef;
+            return $this->imageduplicate($iconImageRef);
         } else {
-            $finalImageRef = $iconImageRef;
-            return $finalImageRef;
+            return $iconImageRef;
         }
     }
 

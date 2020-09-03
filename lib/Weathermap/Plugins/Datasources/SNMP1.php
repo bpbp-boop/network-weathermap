@@ -72,9 +72,9 @@ class SNMP1 extends Base
         $inResult = null;
         $outResult = null;
 
-        $timeout = intval($map->getHint("snmp_timeout", $timeout));
-        $abortCount = intval($map->getHint("snmp_abort_count", $abortCount));
-        $retries = intval($map->getHint("snmp_retries", $retries));
+        $timeout = (int) $map->getHint("snmp_timeout", $timeout);
+        $abortCount = (int) $map->getHint("snmp_abort_count", $abortCount);
+        $retries = (int) $map->getHint("snmp_retries", $retries);
 
         MapUtility::debug("Timeout changed to " . $timeout . " microseconds.\n");
         MapUtility::debug("Will abort after $abortCount failures for a given host.\n");
@@ -89,7 +89,7 @@ class SNMP1 extends Base
             if (($abortCount == 0)
                 || (
                     ($abortCount > 0)
-                    && (!isset($this->downCache[$host]) || intval($this->downCache[$host]) < $abortCount)
+                    && (!isset($this->downCache[$host]) || (int) $this->downCache[$host] < $abortCount)
                 )
             ) {
                 if (function_exists("snmp_get_quick_print")) {

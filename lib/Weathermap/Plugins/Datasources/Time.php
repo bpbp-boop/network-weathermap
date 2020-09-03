@@ -54,7 +54,7 @@ class Time extends Base
             $allTimezones = \DateTimeZone::listIdentifiers();
 
             foreach ($allTimezones as $tz) {
-                if (strtolower($tz) == $timezoneLowerCase) {
+                if (strtolower($tz) === $timezoneLowerCase) {
                     MapUtility::debug("Time ReadData: Timezone exists: $tz\n");
                     $dateTime = new \DateTime("now", new DateTimeZone($tz));
 

@@ -72,37 +72,24 @@ class CactiApplicationInterface extends ApplicationInterface
         $statement = $this->pdo->prepare("SELECT user_auth_realm.realm_id FROM user_auth_realm WHERE user_auth_realm.user_id=? AND user_auth_realm.realm_id=?");
         $statement->execute(array($userId, $realmId));
         $userlist = $statement->fetchAll(PDO::FETCH_OBJ);
-
-        if (count($userlist) > 0) {
-            return true;
-        }
-
-        return false;
+        return count($userlist) > 0;
     }
 
     public function getCurrentUserId()
     {
-        return isset($_SESSION['sess_user_id']) ? intval($_SESSION['sess_user_id']) : 1;
+        return isset($_SESSION['sess_user_id']) ? (int) $_SESSION['sess_user_id'] : 1;
     }
 
     private function isOldCacti()
     {
         global $config;
-
-        if (substr($config['cacti_version'], 0, 3) == "0.8") {
-            return true;
-        }
-        return false;
+        return substr($config['cacti_version'], 0, 3) == "0.8";
     }
 
     private function isNewCacti()
     {
         global $config;
-
-        if (substr($config['cacti_version'], 0, 2) == "1.") {
-            return true;
-        }
-        return false;
+        return substr($config['cacti_version'], 0, 2) == "1.";
     }
 
     public function getMapURL($mapId)

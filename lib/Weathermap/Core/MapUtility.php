@@ -107,8 +107,8 @@ class MapUtility
             $code = $matches[1];
         }
 
-        if ((true === is_array($weathermap_error_suppress))
-            && (true === array_key_exists(strtoupper($code), $weathermap_error_suppress))
+        if ((is_array($weathermap_error_suppress))
+            && (array_key_exists(strtoupper($code), $weathermap_error_suppress))
         ) {
             self::debug("$code is suppressed\n");
             // This error code has been deliberately disabled.
@@ -226,7 +226,7 @@ class MapUtility
         );
         $multiply = 1;
         if (null !== $factor) {
-            $multiply = intval($factor) / 100;
+            $multiply = (int) $factor / 100;
             self::debug("Percentage compass offset: multiply by $multiply");
         }
 
@@ -263,13 +263,11 @@ class MapUtility
         }
 
         if (preg_match('/(-?\d+)r(\d+)$/i', $offsetstring, $matches)) {
-            $angle = intval($matches[1]);
-            $distance = intval($matches[2]);
+            $angle = (int) $matches[1];
+            $distance = (int) $matches[2];
             $radianAngle = deg2rad($angle);
 
-            $offsets = array($distance * sin($radianAngle), -$distance * cos($radianAngle));
-
-            return $offsets;
+            return array($distance * sin($radianAngle), -$distance * cos($radianAngle));
         }
 
         self::warn("Got a position offset that didn't make sense ($offsetstring).");

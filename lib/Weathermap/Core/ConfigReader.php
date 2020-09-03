@@ -1063,11 +1063,7 @@ class ConfigReader
     {
         $this->mapObject = $map;
         $this->currentType = $type;
-        if ($type == 'GLOBAL') {
-            $this->currentObject = $map;
-        } else {
-            $this->currentObject = $object;
-        }
+        $this->currentObject = $type == 'GLOBAL' ? $map : $object;
     }
 
     public function __toString()
@@ -1097,36 +1093,30 @@ class ConfigReader
             if ($sToken === false) {
                 // Ensure that the last phrase is marked as ended
                 $cPhraseQuote = null;
-            } else {
-                // Are we within a phrase or not?
-                if ($cPhraseQuote !== null) {
-                    // Will the current token end the phrase?
-                    if (substr($sToken, -1, 1) === $cPhraseQuote) {
-                        // Trim the last character and add to the current phrase, with a single leading space if necessary
-                        if (strlen($sToken) > 1) {
-                            $sPhrase .= ((strlen($sPhrase) > 0) ? ' ' : null) . substr($sToken, 0, -1);
-                        }
-                        $cPhraseQuote = null;
-                    } else {
-                        // If not, add the token to the phrase, with a single leading space if necessary
-                        $sPhrase .= ((strlen($sPhrase) > 0) ? ' ' : null) . $sToken;
+            } elseif ($cPhraseQuote !== null) {
+                // Will the current token end the phrase?
+                if (substr($sToken, -1, 1) === $cPhraseQuote) {
+                    // Trim the last character and add to the current phrase, with a single leading space if necessary
+                    if (strlen($sToken) > 1) {
+                        $sPhrase .= ((strlen($sPhrase) > 0) ? ' ' : null) . substr($sToken, 0, -1);
                     }
+                    $cPhraseQuote = null;
                 } else {
-                    // Will the current token start a phrase?
-                    if (strpos($sQuotes, $sToken [0]) !== false) {
-                        // Will the current token end the phrase?
-                        if ((strlen($sToken) > 1) && ($sToken [0] === substr($sToken, -1, 1))) {
-                            // The current token begins AND ends the phrase, trim the quotes
-                            $sPhrase = substr($sToken, 1, -1);
-                        } else {
-                            // Remove the leading quote
-                            $sPhrase = substr($sToken, 1);
-                            $cPhraseQuote = $sToken[0];
-                        }
-                    } else {
-                        $sPhrase = $sToken;
-                    }
+                    // If not, add the token to the phrase, with a single leading space if necessary
+                    $sPhrase .= ((strlen($sPhrase) > 0) ? ' ' : null) . $sToken;
                 }
+            } elseif (strpos($sQuotes, $sToken [0]) !== false) {
+                // Will the current token end the phrase?
+                if ((strlen($sToken) > 1) && ($sToken [0] === substr($sToken, -1, 1))) {
+                    // The current token begins AND ends the phrase, trim the quotes
+                    $sPhrase = substr($sToken, 1, -1);
+                } else {
+                    // Remove the leading quote
+                    $sPhrase = substr($sToken, 1);
+                    $cPhraseQuote = $sToken[0];
+                }
+            } else {
+                $sPhrase = $sToken;
             }
 
             // If, at this point, we are not within a phrase, the prepared phrase is complete and can be added to the array
@@ -1180,9 +1170,8 @@ class ConfigReader
         fclose($fileHandle);
 
         $this->currentSource = $filename;
-        $result = $this->readConfigLines($lines);
 
-        return $result;
+        return $this->readConfigLines($lines);
     }
 
     public function readConfigLines($inputLines)
@@ -1298,7 +1287,7 @@ class ConfigReader
             } elseif (substr($key, -1, 1) == '+') {
                 // if the key ends in a plus, it's an array we should append to
                 $key = substr($key, 0, -1);
-                array_push($this->currentObject->$key, $val);
+                $this->currentObject->$key[] = $val;
                 $this->currentObject->addConfigValue($key, $val);
             } else {
                 // otherwise, it's just the name of a property on the
@@ -1484,13 +1473,7 @@ class ConfigReader
         $key = str_replace('COLOR', '', strtoupper($args[0]));
         $val = strtolower($args[1]);
 
-        // this is a regular colour setting thing
-        if (isset($args[2])) {
-            $wmc = new Colour($args[1], $args[2], $args[3]);
-        } else {
-            // it's a special colour
-            $wmc = new Colour($val);
-        }
+        $wmc = isset($args[2]) ? new Colour($args[1], $args[2], $args[3]) : new Colour($val);
         $this->mapObject->colourtable[$key] = $wmc;
 
         return true;
@@ -1594,12 +1577,7 @@ class ConfigReader
         $field = str_replace('color', 'colour', strtolower($args[0]));
         $val = strtolower($args[1]);
 
-        // this is a regular colour setting thing
-        if (isset($args[2])) {
-            $wmc = new Colour($args[1], $args[2], $args[3]);
-        } else {
-            $wmc = new Colour($val);
-        }
+        $wmc = isset($args[2]) ? new Colour($args[1], $args[2], $args[3]) : new Colour($val);
 
         $this->currentObject->$field = $wmc;
 
@@ -1691,12 +1669,7 @@ class ConfigReader
     private function handleSCALE($fullcommand, $args, $matches)
     {
 
-        // The default scale name is DEFAULT
-        if ($matches[1] == '') {
-            $scaleName = 'DEFAULT';
-        } else {
-            $scaleName = trim($matches[1]);
-        }
+        $scaleName = $matches[1] == '' ? 'DEFAULT' : trim($matches[1]);
 
         if (!isset($this->mapObject->scales[$scaleName])) {
             $this->mapObject->scales[$scaleName] = new MapScale($scaleName, $this->mapObject);
@@ -1760,7 +1733,7 @@ class ConfigReader
     private function handleDEFINEOFFSET($fullcommand, $args, $matches)
     {
         MapUtility::debug('Defining a named offset: ' . $matches[1] . "\n");
-        $this->currentObject->namedOffsets[$matches[1]] = array(intval($matches[2]), intval($matches[3]));
+        $this->currentObject->namedOffsets[$matches[1]] = array((int) $matches[2], (int) $matches[3]);
 
         return true;
     }
@@ -1913,7 +1886,7 @@ class ConfigReader
                     # $match[1] is either an array of properties to set, or a function to handle it
                     if (is_array($match[1])) {
                         # if it's a list of variables, check they exist on the relevant object (from scope)
-                        foreach ($match[1] as $key => $val) {
+                        foreach (array_keys($match[1]) as $key) {
                             if (1 === preg_match('/^(.*)\[([^\]]+)\]$/', $key, $m)) {
                                 $key = $m[1];
                             }
@@ -1923,12 +1896,9 @@ class ConfigReader
                                 $result = false;
                             }
                         }
-                    } else {
-                        # if it's a handleXXXX function, check that exists
-                        if (!method_exists($this, $match[1])) {
-                            MapUtility::warn("$scope:$keyword has a missing handler ($match[1])");
-                            $result = false;
-                        }
+                    } elseif (!method_exists($this, $match[1])) {
+                        MapUtility::warn("$scope:$keyword has a missing handler ($match[1])");
+                        $result = false;
                     }
                 }
             }
@@ -1948,7 +1918,7 @@ class ConfigReader
         $all = array();
 
         foreach ($this->configKeywords as $scope => $keywords) {
-            foreach ($keywords as $keyword => $matches) {
+            foreach (array_keys($keywords) as $keyword) {
                 $all [] = strtolower($scope . '_' . $keyword);
             }
         }

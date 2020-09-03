@@ -81,13 +81,8 @@ class Colour
         if (null == $colour2) {
             throw new WeathermapInternalFail('Comparison With Null');
         }
-
-        if ($this->red == $colour2->red && $this->green == $colour2->green
-            && $this->blue == $colour2->blue && $this->alpha == $colour2->alpha
-        ) {
-            return true;
-        }
-        return false;
+        return $this->red == $colour2->red && $this->green == $colour2->green
+            && $this->blue == $colour2->blue && $this->alpha == $colour2->alpha;
     }
 
     /**
@@ -109,40 +104,25 @@ class Colour
     // Is this a transparent/none colour?
     public function isRealColour()
     {
-        if ($this->red >= 0 && $this->green >= 0 && $this->blue >= 0) {
-            return true;
-        }
-
-        return false;
+        return $this->red >= 0 && $this->green >= 0 && $this->blue >= 0;
     }
 
     // Is this a transparent/none colour?
     public function isNone()
     {
-        if ($this->red == -1 && $this->green == -1 && $this->blue == -1) {
-            return true;
-        }
-
-        return false;
+        return $this->red == -1 && $this->green == -1 && $this->blue == -1;
     }
 
     // Is this a contrast colour?
     public function isContrast()
     {
-        if ($this->red == -3 && $this->green == -3 && $this->blue == -3) {
-            return true;
-        }
-
-        return false;
+        return $this->red == -3 && $this->green == -3 && $this->blue == -3;
     }
 
     // Is this a copy colour?
     public function isCopy()
     {
-        if ($this->red == -2 && $this->green == -2 && $this->blue == -2) {
-            return true;
-        }
-        return false;
+        return $this->red == -2 && $this->green == -2 && $this->blue == -2;
     }
 
     // allocate a colour in the appropriate image context

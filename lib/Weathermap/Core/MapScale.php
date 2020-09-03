@@ -87,8 +87,8 @@ class MapScale extends MapItem
 
         MapUtility::debug("Finding a colour for value %s in scale %s\n", $value, $this->name);
 
-        $nowarnClipping = intval($this->owner->getHint('nowarn_clipping'));
-        $nowarnScaleMisses = (!$showScaleWarnings) || intval($this->owner->getHint('nowarn_scalemisses'));
+        $nowarnClipping = (int) $this->owner->getHint('nowarn_clipping');
+        $nowarnScaleMisses = (!$showScaleWarnings) || (int) $this->owner->getHint('nowarn_scalemisses');
 
         if (!isset($this->entries)) {
             throw new WeathermapInternalFail("ColourFromValue: SCALE $scaleName used with no spans defined?");
@@ -191,7 +191,7 @@ class MapScale extends MapItem
         $locale = localeconv();
         $decimalPoint = $locale['decimal_point'];
 
-        if ($output != '') {
+        if ($output !== '') {
             $output .= "\n";
         }
 

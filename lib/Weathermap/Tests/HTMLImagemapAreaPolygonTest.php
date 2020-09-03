@@ -12,6 +12,10 @@ use Weathermap\Core\HTMLImagemapAreaPolygon;
 
 class HTMLImagemapAreaPolygonTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var \Weathermap\Core\HTMLImagemapAreaPolygon|mixed
+     */
+    public $object;
     protected function setUp()
     {
         $this->object = new HTMLImagemapAreaPolygon(

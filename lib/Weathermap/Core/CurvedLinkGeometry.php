@@ -13,7 +13,7 @@ class CurvedLinkGeometry extends LinkGeometry
         // duplicate the first and last points, so that all points are drawn
         // (C-R normally would draw from x[1] to x[n-1]
         array_unshift($this->controlPoints, $this->controlPoints[0]);
-        array_push($this->controlPoints, $this->controlPoints[count($this->controlPoints) - 1]);
+        $this->controlPoints[] = $this->controlPoints[count($this->controlPoints) - 1];
 
         $nPoints = count($this->controlPoints);
 

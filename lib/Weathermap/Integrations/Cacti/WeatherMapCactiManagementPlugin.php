@@ -238,9 +238,8 @@ class WeatherMapCactiManagementPlugin extends UIBase
         foreach ($params as $name => $value) {
             $parts [] = urlencode($name) . "=" . urlencode($value);
         }
-        $url .= join("&", $parts);
 
-        return $url;
+        return $url . implode("&", $parts);
     }
 
     public function handleDumpMapFilesAPI($request, $appObject)
@@ -390,11 +389,7 @@ class WeatherMapCactiManagementPlugin extends UIBase
         $successful = $this->manager->deleteGroup($request['id']);
 
         header('Content-type: application/json');
-        if ($successful) {
-            $data = array("result" => "OK");
-        } else {
-            $data = array("result" => "FAIL");
-        }
+        $data = $successful ? array("result" => "OK") : array("result" => "FAIL");
 
         return json_encode($data);
     }
@@ -445,7 +440,7 @@ class WeatherMapCactiManagementPlugin extends UIBase
         $newname = "";
 
         if (isset($request['id']) && is_numeric($request['id'])) {
-            $id = intval($request['id']);
+            $id = (int) $request['id'];
         }
         if (isset($request['gname']) && (strlen($request['gname']) > 0)) {
             $newname = $request['gname'];
@@ -470,7 +465,7 @@ class WeatherMapCactiManagementPlugin extends UIBase
         if (isset($request['id']) && is_numeric($request['id']) &&
             isset($request['order']) && is_numeric($request['order'])
         ) {
-            $this->manager->moveGroup(intval($request['id']), -1);
+            $this->manager->moveGroup((int) $request['id'], -1);
         }
         header("Location: " . $this->makeURL(array("action" => "groupadmin", "header" => "false")));
     }
@@ -485,7 +480,7 @@ class WeatherMapCactiManagementPlugin extends UIBase
         if (isset($request['id']) && is_numeric($request['id']) &&
             isset($request['order']) && is_numeric($request['order'])
         ) {
-            $this->manager->moveGroup(intval($request['id']), 1);
+            $this->manager->moveGroup((int) $request['id'], 1);
         }
         header("Location: " . $this->makeURL(array("action" => "groupadmin", "header" => "false")));
     }
@@ -498,10 +493,10 @@ class WeatherMapCactiManagementPlugin extends UIBase
         $groupid = -1;
 
         if (isset($request['map_id']) && is_numeric($request['map_id'])) {
-            $mapid = intval($request['map_id']);
+            $mapid = (int) $request['map_id'];
         }
         if (isset($request['new_group']) && is_numeric($request['new_group'])) {
-            $groupid = intval($request['new_group']);
+            $groupid = (int) $request['new_group'];
         }
 
         if (($groupid > 0) && ($mapid >= 0)) {
@@ -518,10 +513,10 @@ class WeatherMapCactiManagementPlugin extends UIBase
         $mapid = null;
         $settingid = null;
         if (isset($request['mapid']) && is_numeric($request['mapid'])) {
-            $mapid = intval($request['mapid']);
+            $mapid = (int) $request['mapid'];
         }
         if (isset($request['id']) && is_numeric($request['id'])) {
-            $settingid = intval($request['id']);
+            $settingid = (int) $request['id'];
         }
 
         if (!is_null($mapid) && !is_null($settingid)) {
@@ -549,11 +544,11 @@ class WeatherMapCactiManagementPlugin extends UIBase
         $value = '';
 
         if (isset($request['mapid']) && is_numeric($request['mapid'])) {
-            $mapid = intval($request['mapid']);
+            $mapid = (int) $request['mapid'];
         }
 
         if (isset($request['id']) && is_numeric($request['id'])) {
-            $settingid = intval($request['id']);
+            $settingid = (int) $request['id'];
         }
 
         if (isset($request['name']) && $request['name']) {
@@ -589,7 +584,7 @@ class WeatherMapCactiManagementPlugin extends UIBase
         if (isset($request['mapid']) && is_numeric($request['mapid'])
             && isset($request['userid']) && is_numeric($request['userid'])
         ) {
-            $this->manager->addPermission(intval($request['mapid']), intval($request['userid']));
+            $this->manager->addPermission((int) $request['mapid'], (int) $request['userid']);
             header("Location: " . $this->makeURL(array("action" => "perms_edit", "id" => $request['mapid'])));
         }
     }
@@ -895,7 +890,7 @@ class WeatherMapCactiManagementPlugin extends UIBase
     ) {
         if (isset($request['id']) && is_numeric($request['id'])) {
             $this->cactiHeader();
-            $this->mapSettings(intval($request['id']));
+            $this->mapSettings((int) $request['id']);
             // wmGenerateFooterLinks();
             $this->footerLinks();
             $this->cactiFooter();
@@ -987,26 +982,22 @@ class WeatherMapCactiManagementPlugin extends UIBase
 
         $lastStarted = $this->manager->application->getAppSetting('weathermap_last_started_file', true);
         $lastFinished = $this->manager->application->getAppSetting('weathermap_last_finished_file', true);
-        $lastStartTime = intval($this->manager->application->getAppSetting('weathermap_last_start_time', true));
-        $lastFinishTime = intval(
-            $this->manager->application->getAppSetting(
-                'weathermap_last_finish_time',
-                true
-            )
+        $lastStartTime = (int) $this->manager->application->getAppSetting('weathermap_last_start_time', true);
+        $lastFinishTime = (int) $this->manager->application->getAppSetting(
+            'weathermap_last_finish_time',
+            true
         );
-        $pollerInterval = intval($this->manager->application->getAppSetting('poller_interval'));
+        $pollerInterval = (int) $this->manager->application->getAppSetting('poller_interval');
 
-        if (($lastFinishTime - $lastStartTime) > $pollerInterval) {
-            if (($lastStarted != $lastFinished) && ($lastStarted != '')) {
-                print '<div align="center" class="wm_warning"><p>';
-                print __(
-                    'Last time it ran, Weathermap did NOT complete its run. It failed during processing for \'%s\'',
-                    $lastStarted
-                );
-                print __('This <b>may</b> have affected other plugins that run during the poller process.') . '</p><p>';
-                print __('You should either disable this map, or fault-find. Possible causes include memory_limit issues. The log may have more information.');
-                print '</p></div>';
-            }
+        if (($lastFinishTime - $lastStartTime) > $pollerInterval && (($lastStarted != $lastFinished) && ($lastStarted != ''))) {
+            print '<div align="center" class="wm_warning"><p>';
+            print __(
+                'Last time it ran, Weathermap did NOT complete its run. It failed during processing for \'%s\'',
+                $lastStarted
+            );
+            print __('This <b>may</b> have affected other plugins that run during the poller process.') . '</p><p>';
+            print __('You should either disable this map, or fault-find. Possible causes include memory_limit issues. The log may have more information.');
+            print '</p></div>';
         }
     }
 
@@ -1169,7 +1160,7 @@ class WeatherMapCactiManagementPlugin extends UIBase
                 if (count($mapusers) == 0) {
                     print __('(no users)');
                 } else {
-                    print join(', ', $mapusers);
+                    print implode(', ', $mapusers);
                 }
                 print '</a>';
 
@@ -1471,7 +1462,7 @@ class WeatherMapCactiManagementPlugin extends UIBase
             $type = 'global';
             $settingrows = $this->manager->getMapSettings(0);
         } elseif ($id < 0) {
-            $group_id = -intval($id);
+            $group_id = -(int) $id;
             $group = $this->manager->getGroup($group_id);
 
             $title = __('Edit per-map settings for Group %s: %s', $group->id, $group->name);
@@ -1488,7 +1479,7 @@ class WeatherMapCactiManagementPlugin extends UIBase
             $title = __('Edit per-map settings for Weathermap %s: %s', $id, $map->titlecache);
             $nonemsg = __('There are no per-map settings for this map yet. You can add some by clicking Add up in the top-right.');
             $type = 'map';
-            $settingrows = $this->manager->getMapSettings(intval($id));
+            $settingrows = $this->manager->getMapSettings((int) $id);
 
             print '<p>' . __('This map is also affected by the following GLOBAL and GROUP settings (group overrides global, map overrides group, but BOTH override SET commands within the map config file):') . '</p>';
 
@@ -1505,7 +1496,7 @@ class WeatherMapCactiManagementPlugin extends UIBase
             '',
             '2',
             'center',
-            'weathermap-cacti10-plugin-mgmt.php?action=map_settings_form&mapid=' . intval($id)
+            'weathermap-cacti10-plugin-mgmt.php?action=map_settings_form&mapid=' . (int) $id
         );
         \html_header(array(__('Actions'), __('Name'), __('Value')), 2);
 
@@ -1519,7 +1510,7 @@ class WeatherMapCactiManagementPlugin extends UIBase
                         array(
                             "action" => "map_settings_form",
                             "mapid" => $id,
-                            "id" => intval($setting->id)
+                            "id" => (int) $setting->id
                         )
                     ) . '"><img src="../../images/graph_properties.gif" width="16" height="16" border="0" alt="' . __('Edit this definition') . '">' . __('Edit') . '</a></td>';
                     print "<td>" . htmlspecialchars($setting->optname) . "</td>";
@@ -1529,7 +1520,7 @@ class WeatherMapCactiManagementPlugin extends UIBase
                             "action" => "map_settings_delete",
                             "mapid" => $id,
                             "header" => "false",
-                            "id" => intval($setting->id)
+                            "id" => (int) $setting->id
                         )
                     ) . '"><img src="../../images/delete_icon_large.gif" width="12" height="12" border="0" alt="' . __('Remove this definition from this map') . '"></a></td>';
                     print "</tr>";
@@ -1570,11 +1561,11 @@ class WeatherMapCactiManagementPlugin extends UIBase
         }
 
         if ($id < 0) {
-            $settings = $this->manager->getMapSettings(intval($id));
+            $settings = $this->manager->getMapSettings((int) $id);
         }
 
         if ($id > 0) {
-            $settings = $this->manager->getMapSettings(intval($id));
+            $settings = $this->manager->getMapSettings((int) $id);
         }
 
         \html_start_box($title, '100%', '', '2', 'center', '');

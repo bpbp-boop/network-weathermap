@@ -80,7 +80,7 @@ class EditorDataPicker extends UIBase
         // $pdo = weathermap_get_pdo();
 
         if (isset($request['host_id'])) {
-            $hostId = intval($request['host_id']);
+            $hostId = (int) $request['host_id'];
         }
 
         if ($hostId >= 0) {
@@ -98,7 +98,9 @@ class EditorDataPicker extends UIBase
 
         $sources = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-        uasort($sources, array($this, "usortNaturalDescriptions"));
+        uasort($sources, function ($a, $b) {
+            return $this->usortNaturalDescriptions($a, $b);
+        });
 
         $hosts = $this->cactiHostList($this->pdo);
 
@@ -126,10 +128,7 @@ class EditorDataPicker extends UIBase
         if (!isset($request[$name])) {
             return $default;
         }
-        if ($request[$name] == 0) {
-            return false;
-        }
-        return true;
+        return $request[$name] != 0;
     }
 
     public function handleLinkStep1($request, $context = null)
@@ -141,10 +140,10 @@ class EditorDataPicker extends UIBase
         $overlib = $this->unpackBoolean($request, 'overlib', true);
         $aggregate = $this->unpackBoolean($request, 'aggregate', false);
 
-        if (isset($request['host_id']) && intval($request['host_id']) >= 0) {
-            $hostID = intval($request['host_id']);
+        if (isset($request['host_id']) && (int) $request['host_id'] >= 0) {
+            $hostID = (int) $request['host_id'];
             $statement = $this->pdo->prepare("SELECT data_local.host_id, data_template_data.local_data_id, data_template_data.name_cache AS description, data_template_data.active, data_template_data.data_source_path FROM data_local,data_template_data,data_input,data_template WHERE data_local.id=data_template_data.local_data_id AND data_input.id=data_template_data.data_input_id AND data_local.data_template_id=data_template.id  AND data_local.host_id=?  ORDER BY name_cache;");
-            $statement->execute(array(intval($request['host_id'])));
+            $statement->execute(array((int) $request['host_id']));
         } else {
             $statement = $this->pdo->prepare("SELECT data_local.host_id, data_template_data.local_data_id, data_template_data.name_cache AS description, data_template_data.active, data_template_data.data_source_path FROM data_local,data_template_data,data_input,data_template WHERE data_local.id=data_template_data.local_data_id AND data_input.id=data_template_data.data_input_id AND data_local.data_template_id=data_template.id  ORDER BY name_cache;");
             $statement->execute();
@@ -152,7 +151,9 @@ class EditorDataPicker extends UIBase
         }
 
         $sources = $statement->fetchAll(PDO::FETCH_ASSOC);
-        uasort($sources, array($this, "usortNaturalDescriptions"));
+        uasort($sources, function ($a, $b) {
+            return $this->usortNaturalDescriptions($a, $b);
+        });
 
         $hosts = $this->cactiHostList($this->pdo);
 
@@ -181,7 +182,7 @@ class EditorDataPicker extends UIBase
     {
         global $config;
 
-        $dataId = intval($request['dataid']);
+        $dataId = (int) $request['dataid'];
         $hostId = $request['host_id'];
 
         list($graphId, $name) = self::getCactiGraphForDataSource($dataId);
@@ -250,7 +251,9 @@ class EditorDataPicker extends UIBase
         $statement->execute();
 
         $hosts = $statement->fetchAll(PDO::FETCH_ASSOC);
-        uasort($hosts, array($this, "usortNaturalNames"));
+        uasort($hosts, function ($a, $b) {
+            return $this->usortNaturalNames($a, $b);
+        });
 
         return $hosts;
     }

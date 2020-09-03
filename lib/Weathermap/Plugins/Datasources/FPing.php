@@ -71,7 +71,7 @@ class FPing extends Base
         $this->data[IN] = null;
         $this->data[OUT] = null;
 
-        $pingCount = intval($map->getHint("fping_ping_count", 5));
+        $pingCount = (int) $map->getHint("fping_ping_count", 5);
 
         if (preg_match($this->regexpsHandled[0], $targetString, $matches)) {
             $this->ping($mapItem, $matches[1], $pingCount);

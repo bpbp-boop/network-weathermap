@@ -166,8 +166,7 @@ class MapBase
         }
 
         if ($recalculate) {
-            $affected = $this->recalculate();
-            return $affected;
+            return $this->recalculate();
         }
         return array($this->name);
     }
@@ -192,19 +191,16 @@ class MapBase
         if (is_null($this->config[$keyname])) {
             // create a new array, with this as the only item
             $this->config[$keyname] = array($value);
+        } elseif (is_array($this->config[$keyname])) {
+            // append the new item to the existing array
+            $this->config[$keyname] [] = $value;
         } else {
-            if (is_array($this->config[$keyname])) {
-                // append the new item to the existing array
-                $this->config[$keyname] [] = $value;
-            } else {
-                // This is the second value, so make a new array of the old one, and this one
-                $this->config[$keyname] = array($this->config[$keyname], $value);
-            }
+            // This is the second value, so make a new array of the old one, and this one
+            $this->config[$keyname] = array($this->config[$keyname], $value);
         }
 
         if ($recalculate) {
-            $affected = $this->recalculate();
-            return $affected;
+            return $this->recalculate();
         }
         return array($this->name);
     }

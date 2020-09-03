@@ -20,33 +20,29 @@ $failCount = 0;
 $fails = array();
 $different = array();
 
-if (is_dir($dir)) {
-    if ($dh = opendir($dir)) {
-        while (($file = readdir($dh)) !== false) {
-            $file = "$dir/$file";
+if (is_dir($dir) && ($dh = opendir($dir))) {
+    while (($file = readdir($dh)) !== false) {
+        $file = "$dir/$file";
 
-            if (substr($file, -4, 4) == '.txt') {
-                $fd = fopen($file, "r");
-                if ($fd) {
-                    while (!feof($fd)) {
-                        $line = fgets($fd);
+        if (substr($file, -4, 4) == '.txt') {
+            $fd = fopen($file, "r");
+            if ($fd) {
+                while (!feof($fd)) {
+                    $line = fgets($fd);
 
-                        if (preg_match('/^Output: \|(\d+)\|/', $line, $matches)) {
-                            if ($matches[1] != '0') {
-                                $realfilename = str_replace(".png.txt", "", $file);
-                                $realfilename = str_replace($dir . "/", "", $realfilename);
-                                $fails[$realfilename] = 1;
-                                $failCount++;
-                                $different[$realfilename] = intval($matches[1]);
-                            }
-                        }
+                    if (preg_match('/^Output: \|(\d+)\|/', $line, $matches) && $matches[1] != '0') {
+                        $realfilename = str_replace(".png.txt", "", $file);
+                        $realfilename = str_replace($dir . "/", "", $realfilename);
+                        $fails[$realfilename] = 1;
+                        $failCount++;
+                        $different[$realfilename] = (int) $matches[1];
                     }
-                    fclose($fd);
                 }
+                fclose($fd);
             }
         }
-        closedir($dh);
     }
+    closedir($dh);
 }
 
 $f = fopen($summaryFile, "r");
@@ -62,7 +58,7 @@ while (!feof($f)) {
         $conf = str_replace("<h4>", "", $conf);
         $conf = str_replace("<hr>", "", $conf);
 
-        if (array_key_exists($conf, $fails) && $fails[$conf] == 1) {
+        if (array_key_exists($conf, $fails) && $fails[$conf] === 1) {
             print $line;
 
             $diffFile = $dir . "/" . $conf . ".png.txt";
@@ -75,7 +71,7 @@ while (!feof($f)) {
             $totalPixels = $dimensions[0] * $dimensions[1];
 
             $percent = sprintf("%.2f%%", $pixelsDifferent / $totalPixels * 100);
-            array_push($percents, $percent);
+            $percents[] = $percent;
 
             print sprintf(
                 "<p><b>To run:</b><code>./weathermap --config test-suite/tests/%s --debug --no-data</code></p>\n",

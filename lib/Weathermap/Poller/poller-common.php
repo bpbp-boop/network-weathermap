@@ -24,7 +24,7 @@ function runMaps($mydir)
 
     $startTime = microtime(true);
     if ($weathermapPollerStartTime == 0) {
-        $weathermapPollerStartTime = intval($startTime);
+        $weathermapPollerStartTime = (int) $startTime;
     }
 
     $pollerConfig = new PollerConfig();

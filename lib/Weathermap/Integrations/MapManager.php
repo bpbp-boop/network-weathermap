@@ -31,46 +31,41 @@ class MapManager
     public function getMap($mapId)
     {
         $statement = $this->pdo->prepare("SELECT * FROM weathermap_maps WHERE id=?");
-        $statement->execute(array(intval($mapId)));
-        $map = $statement->fetch(PDO::FETCH_OBJ);
+        $statement->execute(array((int) $mapId));
 
-        return $map;
+        return $statement->fetch(PDO::FETCH_OBJ);
     }
 
     public function getGroup($groupId)
     {
         $statement = $this->pdo->prepare("SELECT * FROM weathermap_groups WHERE id=?");
         $statement->execute(array($groupId));
-        $group = $statement->fetch(PDO::FETCH_OBJ);
 
-        return $group;
+        return $statement->fetch(PDO::FETCH_OBJ);
     }
 
     public function getMaps()
     {
         $statement = $this->pdo->query("SELECT * FROM weathermap_maps ORDER BY group_id, sortorder");
         $statement->execute();
-        $maps = $statement->fetchAll(PDO::FETCH_OBJ);
 
-        return $maps;
+        return $statement->fetchAll(PDO::FETCH_OBJ);
     }
 
     public function getMapWithAccess($userId, $mapId)
     {
         $statement = $this->pdo->prepare("SELECT weathermap_maps.* FROM weathermap_auth,weathermap_maps WHERE weathermap_maps.id=weathermap_auth.mapid AND active='on' AND (userid=? OR userid=0) AND weathermap_maps.id=?");
         $statement->execute(array($userId, $mapId));
-        $maps = $statement->fetchAll(PDO::FETCH_OBJ);
 
-        return $maps;
+        return $statement->fetchAll(PDO::FETCH_OBJ);
     }
 
     public function getMapsWithAccessAndGroups($userId)
     {
         $statement = $this->pdo->prepare("SELECT DISTINCT weathermap_maps.*,weathermap_groups.name, weathermap_groups.sortorder AS gsort FROM weathermap_groups,weathermap_auth,weathermap_maps WHERE weathermap_maps.group_id=weathermap_groups.id AND weathermap_maps.id=weathermap_auth.mapid AND active='on' AND (userid=? OR userid=0) ORDER BY gsort, sortorder");
         $statement->execute(array($userId));
-        $maps = $statement->fetchAll(PDO::FETCH_OBJ);
 
-        return $maps;
+        return $statement->fetchAll(PDO::FETCH_OBJ);
     }
 
     public function getMapAuth($mapId)
@@ -85,36 +80,32 @@ class MapManager
     {
         $statement = $this->pdo->query("SELECT count(*) AS total FROM weathermap_maps");
         $statement->execute();
-        $totalMapCount = $statement->fetchColumn();
 
-        return $totalMapCount;
+        return $statement->fetchColumn();
     }
 
     public function getMapsInGroup($groupId)
     {
         $statement = $this->pdo->prepare("SELECT * FROM weathermap_maps WHERE group_id=? ORDER BY sortorder");
         $statement->execute(array($groupId));
-        $maps = $statement->fetchAll(PDO::FETCH_OBJ);
 
-        return $maps;
+        return $statement->fetchAll(PDO::FETCH_OBJ);
     }
 
     public function getMapsWithGroups()
     {
         $statement = $this->pdo->query("SELECT weathermap_maps.*, weathermap_groups.name AS groupname FROM weathermap_maps, weathermap_groups WHERE weathermap_maps.group_id=weathermap_groups.id ORDER BY weathermap_groups.sortorder,sortorder");
         $statement->execute();
-        $maps = $statement->fetchAll(PDO::FETCH_OBJ);
 
-        return $maps;
+        return $statement->fetchAll(PDO::FETCH_OBJ);
     }
 
     public function getMapRunList()
     {
         $statement = $this->pdo->query("SELECT m.*, g.name AS groupname FROM weathermap_maps m,weathermap_groups g WHERE m.group_id=g.id AND active='on' ORDER BY sortorder,id");
         $statement->execute();
-        $maps = $statement->fetchAll(PDO::FETCH_OBJ);
 
-        return $maps;
+        return $statement->fetchAll(PDO::FETCH_OBJ);
     }
 
     public function getMapsForUser($userId, $groupId = null)
@@ -128,18 +119,16 @@ class MapManager
             //$statement = $this->pdo->prepare("SELECT DISTINCT weathermap_maps.* FROM weathermap_auth,weathermap_maps WHERE weathermap_maps.id=weathermap_auth.mapid AND active='on' AND  weathermap_maps.group_id=? AND  (userid=? OR userid=0) ORDER BY sortorder, id");
             $statement->execute(array($groupId, $userId));
         }
-        $maps = $statement->fetchAll(PDO::FETCH_OBJ);
 
-        return $maps;
+        return $statement->fetchAll(PDO::FETCH_OBJ);
     }
 
     public function getGroups()
     {
         $statement = $this->pdo->query("SELECT * FROM weathermap_groups ORDER BY sortorder");
         $statement->execute();
-        $groups = $statement->fetchAll(PDO::FETCH_OBJ);
 
-        return $groups;
+        return $statement->fetchAll(PDO::FETCH_OBJ);
     }
 
     private function buildSet($data, $allowed)
@@ -211,10 +200,7 @@ class MapManager
     {
         $statement = $this->pdo->prepare("SELECT id FROM weathermap_maps WHERE id = ?");
         $statement->execute(array($mapId));
-        if ($statement->rowCount() == 1) {
-            return true;
-        }
-        return false;
+        return $statement->rowCount() == 1;
     }
 
     public function deleteMap($id)
@@ -267,7 +253,7 @@ class MapManager
     public function moveMap($mapId, $direction)
     {
         $source = $this->getMap($mapId);
-        $oldOrder = intval($source->sortorder);
+        $oldOrder = (int) $source->sortorder;
         $group = $source->group_id;
 
         $newOrder = $oldOrder + $direction;
@@ -299,7 +285,7 @@ class MapManager
     {
         $source = $this->getGroup($groupId);
 
-        $oldOrder = intval($source->sortorder);
+        $oldOrder = (int) $source->sortorder;
         $newOrder = $oldOrder + $direction;
 
         $statement = $this->pdo->prepare("SELECT * FROM weathermap_groups WHERE sortorder =? LIMIT 1");
@@ -440,13 +426,13 @@ class MapManager
         // mapid is actually a group id
         if ($mapId < 0) {
             $statement = $this->pdo->prepare("SELECT * FROM weathermap_settings WHERE mapid=0 AND groupid=?");
-            $statement->execute(array((-intval($mapId))));
+            $statement->execute(array((-(int) $mapId)));
             return $statement->fetchAll(PDO::FETCH_OBJ);
         }
 
         // default: just one map
         $statement = $this->pdo->prepare("SELECT * FROM weathermap_settings WHERE mapid=?");
-        $statement->execute(array(intval($mapId)));
+        $statement->execute(array((int) $mapId));
         return $statement->fetchAll(PDO::FETCH_OBJ);
     }
 
@@ -454,9 +440,8 @@ class MapManager
     {
         $statement = $this->pdo->prepare("SELECT * FROM weathermap_settings WHERE id=?");
         $statement->execute(array($settingId));
-        $setting = $statement->fetch(PDO::FETCH_OBJ);
 
-        return $setting;
+        return $statement->fetch(PDO::FETCH_OBJ);
     }
 
     public function getMapSettingByName($mapId, $name, $defaultValue)
@@ -465,11 +450,7 @@ class MapManager
         $statement->execute(array($mapId, $name));
         $setting = $statement->fetch(PDO::FETCH_OBJ);
 
-        if ($setting === false) {
-            $setting = $defaultValue;
-        } else {
-            $setting = $setting->optvalue;
-        }
+        $setting = $setting === false ? $defaultValue : $setting->optvalue;
 
         return $setting;
     }
@@ -483,9 +464,8 @@ class MapManager
             $statement = $this->pdo->prepare("SELECT count(*) FROM weathermap_settings WHERE mapid=? AND groupid=?");
             $statement->execute(array($mapId, $groupId));
         }
-        $count = $statement->fetchColumn();
 
-        return $count;
+        return $statement->fetchColumn();
     }
 
     public function createGroup($groupName)
@@ -530,10 +510,7 @@ class MapManager
     {
         $statement = $this->pdo->prepare("SELECT id FROM weathermap_groups WHERE id = ?");
         $statement->execute(array($groupId));
-        if ($statement->rowCount() == 1) {
-            return true;
-        }
-        return false;
+        return $statement->rowCount() == 1;
     }
 
     public function renameGroup($groupId, $newName)
@@ -544,19 +521,17 @@ class MapManager
     public function getMapTitle($mapid)
     {
         $statement = $this->pdo->prepare("SELECT titlecache FROM weathermap_maps WHERE ID=?");
-        $statement->execute(array(intval($mapid)));
-        $title = $statement->fetchColumn();
+        $statement->execute(array((int) $mapid));
 
-        return $title;
+        return $statement->fetchColumn();
     }
 
     public function getMapTitleByHash($mapid)
     {
         $statement = $this->pdo->prepare("SELECT titlecache FROM weathermap_maps WHERE filehash=?");
         $statement->execute(array($mapid));
-        $title = $statement->fetchColumn();
 
-        return $title;
+        return $statement->fetchColumn();
     }
 
     public function extractMapTitle($filename)
@@ -614,7 +589,7 @@ class MapManager
             $newMapId = $this->pdo->lastInsertId();
 
             // add auth for 'current user'
-            $myuid = (isset($_SESSION["sess_user_id"]) ? intval($_SESSION["sess_user_id"]) : 1);
+            $myuid = (isset($_SESSION["sess_user_id"]) ? (int) $_SESSION["sess_user_id"] : 1);
 
             $statement = $this->pdo->prepare("INSERT INTO weathermap_auth (mapid,userid) VALUES (?,?)");
             $statement->execute(array($newMapId, $myuid));
@@ -634,9 +609,8 @@ class MapManager
     {
         $statement = $this->pdo->prepare('SELECT * FROM weathermap_auth WHERE mapid=? ORDER BY userid');
         $statement->execute(array($mapId));
-        $users = $statement->fetchAll(PDO::FETCH_OBJ);
 
-        return $users;
+        return $statement->fetchAll(PDO::FETCH_OBJ);
     }
 
     public function translateFileHash($idOrFilename)
@@ -644,9 +618,7 @@ class MapManager
         $statement = $this->pdo->prepare("SELECT id FROM weathermap_maps WHERE configfile=? OR filehash=?");
         $statement->execute(array($idOrFilename, $idOrFilename));
 
-        $result = $statement->fetchColumn();
-
-        return $result;
+        return $statement->fetchColumn();
     }
 
     /**
@@ -823,10 +795,8 @@ class MapManager
         $databaseUpdates[] = "UPDATE weathermap_maps SET filehash=LEFT(MD5(concat(id,configfile,rand())),20) WHERE filehash = ''";
 
         $columns = $this->getColumnList("weathermap_auth");
-        if (count($columns) > 0) {
-            if (!in_array('usergroupid', $columns)) {
-                $databaseUpdates[] = "ALTER TABLE weathermap_auth ADD usergroupid MEDIUMINT(9) NOT NULL DEFAULT 0 AFTER userid";
-            }
+        if (count($columns) > 0 && !in_array('usergroupid', $columns)) {
+            $databaseUpdates[] = "ALTER TABLE weathermap_auth ADD usergroupid MEDIUMINT(9) NOT NULL DEFAULT 0 AFTER userid";
         }
 
         $columns = $this->getColumnList("weathermap_data");
@@ -847,8 +817,8 @@ class MapManager
         $databaseUpdates[] = "UPDATE weathermap_maps SET sortorder = id WHERE sortorder IS null OR sortorder = 0;";
 
         if (!empty($databaseUpdates)) {
-            for ($a = 0; $a < count($databaseUpdates); $a++) {
-                $this->pdo->query($databaseUpdates[$a]);
+            foreach ($databaseUpdates as $a => $databaseUpdate) {
+                $this->pdo->query($databaseUpdate);
             }
         }
     }

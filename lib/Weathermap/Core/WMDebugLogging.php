@@ -50,13 +50,11 @@ class WMDebugLogging extends WMDebugNull
             $backtrace = debug_backtrace();
             $index = 3;
 
-            $function = (true === isset($backtrace[$index]['function'])) ? $backtrace[$index]['function'] : '';
+            $function = (isset($backtrace[$index]['function'])) ? $backtrace[$index]['function'] : '';
             $index = 2;
-            $file = (true === isset($backtrace[$index]['file'])) ? basename($backtrace[$index]['file']) : '';
-            $line = (true === isset($backtrace[$index]['line'])) ? $backtrace[$index]['line'] : '';
-
-            $callingFunction = " [$function@$file:$line]";
-            return $callingFunction;
+            $file = (isset($backtrace[$index]['file'])) ? basename($backtrace[$index]['file']) : '';
+            $line = (isset($backtrace[$index]['line'])) ? $backtrace[$index]['line'] : '';
+            return " [$function@$file:$line]";
         }
         return $callingFunction;
     }
@@ -68,13 +66,9 @@ class WMDebugLogging extends WMDebugNull
 
         $isReadData = false;
 
-        if (($weathermap_debugging_readdata) and (false !== strpos('ReadData', $string))) {
+        if ($weathermap_debugging_readdata && false !== strpos('ReadData', $string)) {
             $isReadData = true;
         }
-
-        if ($weathermap_debugging || ($weathermap_debugging_readdata && $isReadData)) {
-            return true;
-        }
-        return false;
+        return $weathermap_debugging || ($weathermap_debugging_readdata && $isReadData);
     }
 }

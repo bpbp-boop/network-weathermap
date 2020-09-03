@@ -31,7 +31,7 @@ class Cacti extends Base
     public function init(&$map)
     {
         if ($map->context === 'cacti') {
-            if (true === function_exists('db_fetch_row')) {
+            if (function_exists('db_fetch_row')) {
                 return true;
             } else {
                 MapUtility::debug('ReadData cacti: Cacti database library not found.\n');
@@ -49,7 +49,7 @@ class Cacti extends Base
         $this->data[OUT] = null;
 
         if (1 === preg_match($this->regexpsHandled[0], $targetString, $matches)) {
-            $localDataId = intval($matches[1]);
+            $localDataId = (int) $matches[1];
 
             // This is very unlikely to work - nothing is ADDING the correct lines to weathermap_data!
             $SQL = 'select * from weathermap_data where local_data_id='.$localDataId;

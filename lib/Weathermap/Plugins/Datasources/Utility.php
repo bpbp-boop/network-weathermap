@@ -54,7 +54,7 @@ class Utility
             return $map->dsinfocache[$localDataId];
         }
 
-        $setSpeed = intval($item->getHint("cacti_use_ifspeed"));
+        $setSpeed = (int) $item->getHint("cacti_use_ifspeed");
 
         $hintsToSet = self::getCactiSnmpCache($localDataId);
 
@@ -70,7 +70,7 @@ class Utility
         );
 
         if (isset($results['local_graph_id'])) {
-            $hintsToSet["cacti_graph_id"] = intval($results['local_graph_id']);
+            $hintsToSet["cacti_graph_id"] = (int) $results['local_graph_id'];
         }
 
         $map->dsinfocache[$localDataId] = $hintsToSet;
@@ -89,8 +89,8 @@ class Utility
      */
     public static function determineCactiInterfaceSpeed(&$item, $itemsToSet)
     {
-        $ifSpeed = intval($itemsToSet['cacti_ifSpeed']);
-        $ifHighSpeed = intval($itemsToSet['cacti_ifHighSpeed']);
+        $ifSpeed = (int) $itemsToSet['cacti_ifSpeed'];
+        $ifHighSpeed = (int) $itemsToSet['cacti_ifHighSpeed'];
 
         $speed = 0;
 
@@ -132,7 +132,7 @@ class Utility
             $itemsToSet[$variableName] = $cacheValues['field_value'];
 
             if (isset($cacheValues['host_id'])) {
-                $itemsToSet['cacti_host_id'] = intval($cacheValues['host_id']);
+                $itemsToSet['cacti_host_id'] = (int) $cacheValues['host_id'];
             }
         }
 

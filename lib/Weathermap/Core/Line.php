@@ -28,9 +28,8 @@ class Line
     public function getYIntercept()
     {
         $slope = $this->getSlope();
-        $intercept = $this->point->y - $this->point->x * $slope;
 
-        return $intercept;
+        return $this->point->y - $this->point->x * $slope;
     }
 
     public function __toString()

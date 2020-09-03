@@ -204,12 +204,12 @@ class MapRuntime
         }
 
         // TODO: will this ever be 0?
-        if (intval($map->thumbWidth) > 0) {
+        if ((int) $map->thumbWidth > 0) {
             $this->manager->updateMap(
                 $this->mapConfig->id,
                 array(
-                    'thumb_width' => intval($map->thumbWidth),
-                    'thumb_height' => intval($map->thumbHeight)
+                    'thumb_width' => (int) $map->thumbWidth,
+                    'thumb_height' => (int) $map->thumbHeight
                 )
             );
         }
@@ -233,7 +233,7 @@ class MapRuntime
             $this->mapConfig->id,
             array(
                 'titlecache' => $map->processString($map->title, $map),
-                'warncount' => intval($this->warncount),
+                'warncount' => (int) $this->warncount,
                 'runtime' => floatval($mapDuration)
             )
         );
@@ -264,12 +264,10 @@ class MapRuntime
             fwrite($fd, $map->makeHTML('weathermap_' . $filehash . '_imap'));
             fclose($fd);
             MapUtility::debug("Wrote HTML to $filename");
+        } elseif (file_exists($filename)) {
+            MapUtility::warn("Failed to overwrite $filename - permissions of existing file are wrong? [WMPOLL02]\n");
         } else {
-            if (file_exists($filename)) {
-                MapUtility::warn("Failed to overwrite $filename - permissions of existing file are wrong? [WMPOLL02]\n");
-            } else {
-                MapUtility::warn("Failed to create $filename - permissions of output directory are wrong? [WMPOLL03]\n");
-            }
+            MapUtility::warn("Failed to create $filename - permissions of output directory are wrong? [WMPOLL03]\n");
         }
     }
 

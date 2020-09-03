@@ -137,9 +137,8 @@ class UIBase
 
         if (isset($command['handler'])) {
             $handler = $command['handler'];
-            $result = $this->$handler($params, $appObject);
 
-            return $result;
+            return $this->$handler($params, $appObject);
         }
 
         print "NOPE";
@@ -186,10 +185,7 @@ class UIBase
 
     private function validateArgItemType($value)
     {
-        if ($value == "node" || $value == "link") {
-            return true;
-        }
-        return false;
+        return $value == "node" || $value == "link";
     }
 
     private function validateArgMaphash($value)
@@ -199,10 +195,7 @@ class UIBase
             return false;
         }
         $result = preg_match('/[^0-9a-f]/', $value);
-        if ($result) {
-            return false;
-        }
-        return true;
+        return !$result;
     }
 
     private function validateArgString($value)
@@ -213,19 +206,12 @@ class UIBase
 
     private function validateArgNonEmptyString($value)
     {
-        if (strlen($value) > 0) {
-            return true;
-        }
-
-        return false;
+        return strlen($value) > 0;
     }
 
     private function validateArgMapFilename($value)
     {
-        if ($value == self::wmeSanitizeConfigFile($value)) {
-            return true;
-        }
-        return false;
+        return $value == self::wmeSanitizeConfigFile($value);
     }
 
     private function validateArgMapFilenameList($value)
@@ -241,18 +227,12 @@ class UIBase
 
     private function validateArgJavascriptName($value)
     {
-        if ($value == self::wmeSanitizeName($value)) {
-            return true;
-        }
-        return false;
+        return $value == self::wmeSanitizeName($value);
     }
 
     private function validateArgName($value)
     {
-        if ($value == self::wmeSanitizeName($value)) {
-            return true;
-        }
-        return false;
+        return $value == self::wmeSanitizeName($value);
     }
 
     private function validateArgInt($value)
@@ -260,39 +240,23 @@ class UIBase
         if (is_int($value)) {
             return true;
         }
-
-        if ((is_numeric($value) && (intval($value) == floatval($value)))) {
-            return true;
-        }
-
-        return false;
+        return is_numeric($value) && ((int) $value == floatval($value));
     }
 
     private function validateArgFloat($value)
     {
-        if (is_numeric($value)) {
-            return true;
-        }
-
-        return false;
+        return is_numeric($value);
     }
 
 
     private function validateArgBandwidth($value)
     {
-        if (preg_match('/^(\d+\.?\d*[KMGT]?)$/', $value)) {
-            return true;
-        }
-        return false;
+        return (bool) preg_match('/^(\d+\.?\d*[KMGT]?)$/', $value);
     }
 
     private function validateArgBool($value)
     {
-        if ($value == "0" || $value == "1") {
-            return true;
-        }
-
-        return false;
+        return $value == "0" || $value == "1";
     }
 
 
@@ -332,10 +296,7 @@ class UIBase
 
     public static function wmeValidateBandwidth($bandwidth)
     {
-        if (preg_match('/^(\d+\.?\d*[KMGT]?)$/', $bandwidth)) {
-            return true;
-        }
-        return false;
+        return (bool) preg_match('/^(\d+\.?\d*[KMGT]?)$/', $bandwidth);
     }
 
     public static function wmeValidateOneOf($input, $validChoices = array(), $caseSensitive = false)
@@ -375,7 +336,7 @@ class UIBase
         foreach ($allowedExtensions as $ext) {
             $match = "." . $ext;
 
-            if (substr($filename, -strlen($match), strlen($match)) == $match) {
+            if (substr($filename, -strlen($match), strlen($match)) === $match) {
                 $clean = true;
             }
         }

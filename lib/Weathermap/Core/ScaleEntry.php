@@ -31,15 +31,11 @@ class ScaleEntry
 
     public function getColour($value)
     {
-        if (is_null($this->c2) or $this->c1->equals($this->c2)) {
+        if (is_null($this->c2) || $this->c1->equals($this->c2)) {
             $colour = $this->c1;
         } else {
-            if ($this->bottom == $this->top) {
-                $ratio = 0;
-            } else {
-                $ratio = ($value - $this->bottom)
-                    / ($this->top - $this->bottom);
-            }
+            $ratio = $this->bottom == $this->top ? 0 : ($value - $this->bottom)
+                / ($this->top - $this->bottom);
             $colour = $this->c1->blendWith($this->c2, $ratio);
         }
 
@@ -125,10 +121,7 @@ class ScaleEntry
 
     public function hit($value)
     {
-        if (($value >= $this->bottom) and ($value <= $this->top)) {
-            return true;
-        }
-        return false;
+        return $value >= $this->bottom && $value <= $this->top;
     }
 
     public function span()

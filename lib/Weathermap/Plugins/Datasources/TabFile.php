@@ -99,9 +99,7 @@ class TabFile extends Base
             wm_warn("File '$fullpath' isn't readable.");
             return null;
         }
-
-        $fileHandle = fopen($fullpath, "r");
-        return $fileHandle;
+        return fopen($fullpath, "r");
     }
 }
 

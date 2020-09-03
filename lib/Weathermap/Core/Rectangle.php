@@ -83,15 +83,10 @@ class Rectangle
 
     public function containsPoint($testPoint)
     {
-        if ($this->topLeft->x <= $testPoint->x
+        return $this->topLeft->x <= $testPoint->x
             && $this->bottomRight->x >= $testPoint->x
             && $this->topLeft->y <= $testPoint->y
-            && $this->bottomRight->y >= $testPoint->y
-        ) {
-            return true;
-        }
-
-        return false;
+            && $this->bottomRight->y >= $testPoint->y;
     }
 
     public function asArray()

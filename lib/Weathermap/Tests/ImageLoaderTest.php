@@ -136,7 +136,7 @@ class ImageLoaderTest extends \PHPUnit_Framework_TestCase
                 $rgba2 = imagecolorat($copy, $x, $y);
 
                 if ($tc) {
-                    if ($rgba1 != $rgba2) {
+                    if ($rgba1 !== $rgba2) {
                         $fails++;
 //                            printf("(%8x) (%8x)\n", $rgba1, $rgba2);
                     }

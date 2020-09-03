@@ -82,7 +82,7 @@ class Target
         // if the remaining targetstring starts with a number and a *-, then this is a scale factor
         if (preg_match('/^(\d+\.?\d*)\*(.*)/', $this->finalTargetString, $matches)) {
             $this->finalTargetString = $matches[2];
-            $this->scaleFactor = $this->scaleFactor * floatval($matches[1]);
+            $this->scaleFactor *= floatval($matches[1]);
         }
         if ($this->scaleFactor != 1.0) {
             MapUtility::debug("%s: will scale by %f\n", $mapItem, $this->scaleFactor);

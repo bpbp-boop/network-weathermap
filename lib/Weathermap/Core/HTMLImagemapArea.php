@@ -25,11 +25,7 @@ class HTMLImagemapArea
 
     public function hasLinks()
     {
-        if (($this->href != '') || ($this->extrahtml != '')) {
-            return true;
-        }
-
-        return false;
+        return ($this->href != '') || ($this->extrahtml != '');
     }
 
     protected function commonHTML()

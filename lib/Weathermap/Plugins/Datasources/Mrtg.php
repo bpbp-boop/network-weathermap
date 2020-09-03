@@ -72,7 +72,7 @@ class Mrtg extends Base
             $this->data[IN] = $t;
         }
 
-        if ($negate) {
+        if ($negate !== 0) {
             MapUtility::debug("MRTG ReadData: Negating values\n");
             $this->data[OUT] = -$this->data[OUT];
             $this->data[IN] = -$this->data[IN];

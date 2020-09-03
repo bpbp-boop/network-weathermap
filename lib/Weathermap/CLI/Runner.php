@@ -337,7 +337,7 @@ class Runner
 
         if ($this->getOpt->getOption('dump-json') != '') {
             $fd = fopen($this->getOpt->getOption('dump-json'), "w");
-            fputs($fd, $this->map->getJSONConfig());
+            fwrite($fd, $this->map->getJSONConfig());
             fclose($fd);
         }
 

@@ -241,7 +241,7 @@ class MapDataItem extends MapItem
             }
         }
 
-        MapUtility::debug("ReadData complete for %s: %s\n", $this, join(' ', $this->absoluteUsages));
+        MapUtility::debug("ReadData complete for %s: %s\n", $this, implode(' ', $this->absoluteUsages));
         MapUtility::debug(
             "ReadData: Setting %s,%s for %s\n",
             StringUtility::valueOrNull($this->absoluteUsages[IN]),
@@ -271,7 +271,7 @@ class MapDataItem extends MapItem
                     MapUtility::debug("Adding %f to total for channel %d\n", $results[$channel], $channel);
                     $this->absoluteUsages[$channel] += $results[$channel];
                 }
-                MapUtility::debug("Running totals: %s\n", join(' ', $this->absoluteUsages));
+                MapUtility::debug("Running totals: %s\n", implode(' ', $this->absoluteUsages));
             } else {
                 MapUtility::debug("Invalid data?\n");
                 $nFails++;
@@ -381,7 +381,7 @@ class MapDataItem extends MapItem
             if ($myArray[$dir] != $theirArray[$dir]) {
                 $value = $myArray[$dir];
                 if (is_array($value)) {
-                    $value = join(' ', $value);
+                    $value = implode(' ', $value);
                 }
                 $output .= "\t" . $dirText . $configKeyword . ' ' . $value . "\n";
             }
@@ -458,7 +458,7 @@ class MapDataItem extends MapItem
         $key = '';
         $dirs = $this->getChannelList();
         foreach ($dirs as $name => $index) {
-            $key .= join('', $this->overliburl[$index]);
+            $key .= implode('', $this->overliburl[$index]);
             $key .= $this->notestext[$index];
         }
 

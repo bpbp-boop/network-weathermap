@@ -192,9 +192,9 @@ class Editor
                     $dx = $link->endpoints[0]->node->x - $newX;
                     $dy = $link->endpoints[0]->node->y - $newY;
 
-                    for ($count = 0; $count < count($link->viaList); $count++) {
-                        $link->viaList[$count][0] = $link->viaList[$count][0] - $dx;
-                        $link->viaList[$count][1] = $link->viaList[$count][1] - $dy;
+                    foreach ($link->viaList as $count => $viaList) {
+                        $link->viaList[$count][0] = $viaList[0] - $dx;
+                        $link->viaList[$count][1] = $viaList[1] - $dy;
                     }
                 } else {
                     $pivotX = $pivot->x;
@@ -224,8 +224,9 @@ class Editor
 
                     // rotate so that link is along the axis
                     MathUtility::rotateAboutPoint($points, $pivotX, $pivotY, deg2rad($oldAngle));
+                    $pointsCount = count($points);
                     // do the scaling in here
-                    for ($count = 0; $count < (count($points) / 2); $count++) {
+                    for ($count = 0; $count < ($pointsCount / 2); $count++) {
                         $basex = ($points[$count * 2] - $pivotX) * $scaleFactor + $pivotX;
                         $points[$count * 2] = $basex;
                     }
@@ -323,14 +324,11 @@ class Editor
         if (array_key_exists('lock_to', $params)) {
             if ($params['lock_to'] == "") {
                 $node->positionRelativeTo = "";
-            } else {
-                if ($this->map->nodeExists($params['lock_to'])) {
-                    $anchor = $this->map->getNode($params['lock_to']);
-
-                    $node->positionRelativeTo = $anchor->name;
-                    $node->originalX = $node->x - $anchor->x;
-                    $node->originalY = $node->y - $anchor->y;
-                }
+            } elseif ($this->map->nodeExists($params['lock_to'])) {
+                $anchor = $this->map->getNode($params['lock_to']);
+                $node->positionRelativeTo = $anchor->name;
+                $node->originalX = $node->x - $anchor->x;
+                $node->originalY = $node->y - $anchor->y;
             }
         }
     }
@@ -434,11 +432,9 @@ class Editor
             $log = "delete node " . $nodeName;
 
             foreach ($this->map->links as $link) {
-                if (isset($link->endpoints[0]->node)) {
-                    if (($nodeName == $link->endpoints[0]->node->name) || ($nodeName == $link->endpoints[1]->node->name)) {
-                        $affectedLinks[] = $link->name;
-                        unset($this->map->links[$link->name]);
-                    }
+                if (isset($link->endpoints[0]->node) && (($nodeName == $link->endpoints[0]->node->name) || ($nodeName == $link->endpoints[1]->node->name))) {
+                    $affectedLinks[] = $link->name;
+                    unset($this->map->links[$link->name]);
                 }
             }
 
@@ -471,7 +467,7 @@ class Editor
             if (isset($this->map->nodes[$newNodeName])) {
                 $newNodeName = $sourceNodeName;
                 do {
-                    $newNodeName = $newNodeName . "_copy";
+                    $newNodeName .= "_copy";
                 } while (isset($this->map->nodes[$newNodeName]));
             }
 
@@ -548,8 +544,8 @@ class Editor
             $link->overliburl[IN] = $urls;
             $link->overliburl[OUT] = $urls;
 
-            $link->commentOffsets[IN] = intval($params['commentpos_in']);
-            $link->commentOffsets[OUT] = intval($params['commentpos_out']);
+            $link->commentOffsets[IN] = (int) $params['commentpos_in'];
+            $link->commentOffsets[OUT] = (int) $params['commentpos_out'];
 
             $link->comments[IN] = $params['comment_in'];
             $link->comments[OUT] = $params['comment_out'];
@@ -790,11 +786,7 @@ class Editor
         if ($rangeA[0] > $rangeB[1]) {
             return false;
         }
-        if ($rangeB[0] > $rangeA[1]) {
-            return false;
-        }
-
-        return true;
+        return $rangeB[0] <= $rangeA[1];
     }
 
     /**
@@ -969,8 +961,7 @@ class Editor
     {
         $route = $link->endpoints[0]->node->name . " " . $link->endpoints[1]->node->name;
         if (strcmp($link->endpoints[0]->node->name, $link->endpoints[1]->node->name) > 0) {
-            $route = $link->endpoints[1]->node->name . " " . $link->endpoints[0]->node->name;
-            return $route;
+            return $link->endpoints[1]->node->name . " " . $link->endpoints[0]->node->name;
         }
         return $route;
     }
@@ -1067,7 +1058,7 @@ class Editor
         }
 
         $this->map->htmlstyle = $params['htmlstyle'];
-        $this->map->keyfont = intval($params['legendfont']);
+        $this->map->keyfont = (int) $params['legendfont'];
 
         $inheritables = array(
             array('link', 'labelStyle', 'bwlabels', ""),
@@ -1173,7 +1164,7 @@ class Editor
             if ($validationType != "") {
                 switch ($validationType) {
                     case "int":
-                        $new = intval($new);
+                        $new = (int) $new;
                         break;
                     case "float":
                         $new = floatval($new);

@@ -62,10 +62,8 @@ class CactiTholdStatus extends Base
 
             $tholdPresent = false;
 
-            if (function_exists("api_plugin_is_enabled")) {
-                if (api_plugin_is_enabled('thold')) {
-                    $tholdPresent = true;
-                }
+            if (function_exists("api_plugin_is_enabled") && api_plugin_is_enabled('thold')) {
+                $tholdPresent = true;
             }
 
             if (!$tholdPresent) {
@@ -131,8 +129,8 @@ class CactiTholdStatus extends Base
             // use target aggregation to build these up into a 'badness' percentage
             // takes the same two values that are visible in thold's own URLs (the actual thold ID isn't shown anywhere)
 
-            $rraId = intval($matches[1]);
-            $dataId = intval($matches[2]);
+            $rraId = (int) $matches[1];
+            $dataId = (int) $matches[2];
 
 //            $SQL2 = "select thold_alert from thold_data where rra_id=$rra_id and data_id=$data_id and thold_enabled='on'";
 
@@ -142,16 +140,12 @@ class CactiTholdStatus extends Base
 
 //            $result = db_fetch_row($SQL2);
             if (isset($result)) {
-                if ($result['thold_alert'] > 0) {
-                    $this->data[IN] = 1;
-                } else {
-                    $this->data[IN] = 0;
-                }
+                $this->data[IN] = $result['thold_alert'] > 0 ? 1 : 0;
                 $this->data[OUT] = 0;
             }
         } elseif (preg_match('/^cacti(thold|monitor):(\d+)$/', $targetString, $matches)) {
             $type = $matches[1];
-            $id = intval($matches[2]);
+            $id = (int) $matches[2];
 
             if ($type == 'thold') {
                 // VERY simple. Returns 0 if threshold is not breached, 1 if it is.
@@ -163,11 +157,7 @@ class CactiTholdStatus extends Base
 
 //                $result = db_fetch_row($SQL2);
                 if (isset($result)) {
-                    if ($result['thold_alert'] > 0) {
-                        $this->data[IN] = 1;
-                    } else {
-                        $this->data[IN] = 0;
-                    }
+                    $this->data[IN] = $result['thold_alert'] > 0 ? 1 : 0;
                     $this->data[OUT] = 0;
                 }
             }
@@ -246,7 +236,7 @@ class CactiTholdStatus extends Base
                         $desc = $th['rra_id'] . "/" . $th['data_id'];
                         $v = $th['thold_alert'];
                         $numThresholds++;
-                        if (intval($th['thold_alert']) > 0) {
+                        if ((int) $th['thold_alert'] > 0) {
                             MapUtility::debug("CactiTHold ReadData: Seen threshold $desc failing ($v)for host $id\n");
                             $numFailing++;
                         } else {

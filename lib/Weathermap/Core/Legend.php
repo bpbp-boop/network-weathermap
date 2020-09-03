@@ -127,7 +127,7 @@ class Legend extends MapItem
 
         $areaName = 'LEGEND:' . $this->name;
 
-        $newArea = new HTMLImageMapAreaRectangle(
+        $newArea = new \Weathermap\Core\HTMLImagemapAreaRectangle(
             array(
                 array(
                     $xTarget,
@@ -274,8 +274,8 @@ class Legend extends MapItem
 
         MapUtility::debug("Drawing $nScales colours into SCALE\n");
 
-        $hideZero = intval($this->owner->getHint('key_hidezero_' . $this->name));
-        $hidePercentSign = intval($this->owner->getHint('key_hidepercent_' . $this->name));
+        $hideZero = (int) $this->owner->getHint('key_hidezero_' . $this->name);
+        $hidePercentSign = (int) $this->owner->getHint('key_hidepercent_' . $this->name);
 
         // did we actually hide anything?
         $didHideZero = false;
@@ -290,7 +290,7 @@ class Legend extends MapItem
         $fontObject = $this->keyfont;
 
         list($tileWidth, $tileHeight) = $fontObject->calculateImageStringSize('MMMM');
-        $tileHeight = $tileHeight * 1.1;
+        $tileHeight *= 1.1;
         $tileSpacing = $tileHeight + 2;
 
         list($minWidth,) = $fontObject->calculateImageStringSize('MMMM 100%-100%');
@@ -568,11 +568,7 @@ class Legend extends MapItem
         );
 
         for ($percentage = 0; $percentage <= 100; $percentage++) {
-            if ($inverted) {
-                $deltaY = (100 - $percentage) * $scaleFactor;
-            } else {
-                $deltaY = $percentage * $scaleFactor;
-            }
+            $deltaY = $inverted ? (100 - $percentage) * $scaleFactor : $percentage * $scaleFactor;
 
             if (($percentage % 25) == 0) {
                 imageline(

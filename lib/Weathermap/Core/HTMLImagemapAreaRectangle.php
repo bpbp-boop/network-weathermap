@@ -53,13 +53,13 @@ class HTMLImagemapAreaRectangle extends HTMLImagemapArea
 
     public function asHTML()
     {
-        $coordstring = join(',', array($this->x1, $this->y1, $this->x2, $this->y2));
+        $coordstring = implode(',', array($this->x1, $this->y1, $this->x2, $this->y2));
         return '<area ' . $this->commonHTML() . 'shape="rect" coords="' . $coordstring . '" />';
     }
 
     public function asJSONData()
     {
-        $data = array(
+        return array(
             'shape' => 'rect',
             'name' => $this->name,
             'minx' => $this->x1,
@@ -69,8 +69,6 @@ class HTMLImagemapAreaRectangle extends HTMLImagemapArea
             'href' => $this->href,
             'extrahtml' => $this->extrahtml
         );
-
-        return $data;
     }
 
     public function __toString()

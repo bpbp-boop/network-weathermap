@@ -38,12 +38,7 @@ function weathermap_page_title($t)
             $cactiInterface = new Weathermap\Integrations\Cacti\CactiApplicationInterface($pdo);
             $manager = new Weathermap\Integrations\MapManager($pdo, "", $cactiInterface);
 
-            // TODO: Should numeric ID ever happen?
-            if (preg_match('/^\d+$/', $mapid)) {
-                $title = $manager->getMapTitle($mapid);
-            } else {
-                $title = $manager->getMapTitleByHash($mapid);
-            }
+            $title = preg_match('/^\d+$/', $mapid) ? $manager->getMapTitle($mapid) : $manager->getMapTitleByHash($mapid);
             if (isset($title)) {
                 $t .= " - $title";
             }
@@ -151,11 +146,7 @@ function weathermap_config_settings()
             "array" => array(0 => "Chatty (default)", 1 => "Quiet")
         )
     );
-    if (isset($settings["misc"])) {
-        $settings["misc"] = array_merge($settings["misc"], $temp);
-    } else {
-        $settings["misc"] = $temp;
-    }
+    $settings["misc"] = isset($settings["misc"]) ? array_merge($settings["misc"], $temp) : $temp;
 }
 
 
@@ -196,8 +187,8 @@ function weathermap_show_tab()
         $realmID = $user_auth_realm_filenames[basename('weathermap-cacti88-plugin.php')];
     }
 
-    $tabstyle = intval(\read_config_option("superlinks_tabstyle"));
-    $userid = (isset($_SESSION["sess_user_id"]) ? intval($_SESSION["sess_user_id"]) : 1);
+    $tabstyle = (int) \read_config_option("superlinks_tabstyle");
+    $userid = (isset($_SESSION["sess_user_id"]) ? (int) $_SESSION["sess_user_id"] : 1);
 
     $pdo = weathermap_get_pdo();
     $stmt = $pdo->prepare("SELECT user_auth_realm.realm_id FROM user_auth_realm WHERE user_auth_realm.user_id=? AND user_auth_realm.realm_id=?");
@@ -205,11 +196,7 @@ function weathermap_show_tab()
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     if ((count($result) > 0) || (empty($realmID))) {
-        if ($tabstyle > 0) {
-            $prefix = "s_";
-        } else {
-            $prefix = "";
-        }
+        $prefix = $tabstyle > 0 ? "s_" : "";
         $tabName = $prefix . "tab_weathermap.gif";
         $weathermapBaseURL = $config['url_path'] . 'plugins/weathermap';
         $weathermapURL = $weathermapBaseURL . '/weathermap-cacti88-plugin.php';

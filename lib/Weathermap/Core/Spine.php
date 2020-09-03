@@ -249,12 +249,12 @@ class Spine
 
         // if somehow we have a 0-length curve, then don't try and search, just give up
         // in a somewhat predictable manner
-        if ($this->elements[$left]->distance == $this->elements[$right]->distance) {
+        if ($this->elements[$left]->distance === $this->elements[$right]->distance) {
             return $left;
         }
 
         while ($left <= $right) {
-            $mid = intval(floor(($left + $right) / 2));
+            $mid = (int) floor(($left + $right) / 2);
 
             if (($this->elements[$mid]->distance <= $targetDistance) && ($this->elements[$mid + 1]->distance > $targetDistance)) {
                 return $mid;
@@ -341,9 +341,8 @@ class Spine
         for ($i = 0; $i < $this->pointCount(); $i++) {
             $output .= sprintf('%s[%s]--', $this->elements[$i]->point, $this->elements[$i]->distance);
         }
-        $output .= ']';
 
-        return $output;
+        return $output . ']';
     }
 
     public function drawSpine($gdImage, $colour)

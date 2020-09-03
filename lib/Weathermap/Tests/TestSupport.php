@@ -117,6 +117,6 @@ class TestSupport
         $map->cleanUp();
         unset($map);
 
-        return intval($numWarnings);
+        return (int) $numWarnings;
     }
 }

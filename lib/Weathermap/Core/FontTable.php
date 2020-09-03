@@ -93,9 +93,8 @@ class FontTable
                 $output .= $fontObject->getConfig($fontNumber);
             }
         }
-        $output .= "\n";
 
-        return $output;
+        return $output . "\n";
     }
 
     /**

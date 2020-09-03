@@ -76,7 +76,7 @@ class HTMLImagemap
     {
         $count = 0;
 
-        if (true === isset($this->shapes[$where])) {
+        if (isset($this->shapes[$where])) {
             // this USED to be a substring match, but that broke some things
             // and wasn't actually used as one anywhere.
             switch ($which) {
@@ -130,7 +130,7 @@ class HTMLImagemap
                 if ($reverseOrder) {
                     array_unshift($result, $shape);
                 } else {
-                    array_push($result, $shape);
+                    $result[] = $shape;
                 }
             }
         }
@@ -150,9 +150,8 @@ class HTMLImagemap
             $html .= $shape->asHTML() . "\n";
             $html .= "\n";
         }
-        $html .= "</map>\n";
 
-        return $html;
+        return $html . "</map>\n";
     }
 
     public function exactHTML($name = '', $skipNoLinks = false)

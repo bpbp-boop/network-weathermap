@@ -54,7 +54,7 @@ class CactiHostStatus extends Base
         $this->data[OUT] = null;
 
         if (preg_match($this->regexpsHandled[0], $targetString, $matches)) {
-            $cactiHostId = intval($matches[1]);
+            $cactiHostId = (int) $matches[1];
 
             $pdo = weathermap_get_pdo();
 

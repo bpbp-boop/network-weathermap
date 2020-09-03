@@ -722,9 +722,9 @@ class EditorUI extends UIBase
      */
     public function cmdEditorSettings($params, $editor)
     {
-        $this->useOverlayVIA = $params['editorsettings_showvias'] == 1 ? true : false;
-        $this->useOverlayRelative = $params['editorsettings_showrelative'] == 1 ? true : false;
-        $this->gridSnapValue = intval($params['editorsettings_gridsnap']);
+        $this->useOverlayVIA = $params['editorsettings_showvias'] == 1;
+        $this->useOverlayRelative = $params['editorsettings_showrelative'] == 1;
+        $this->gridSnapValue = (int) $params['editorsettings_gridsnap'];
     }
 
 
@@ -891,16 +891,16 @@ class EditorUI extends UIBase
         if (isset($cookies['wmeditor'])) {
             $parts = explode(":", $cookies['wmeditor']);
 
-            if ((isset($parts[0])) && (intval($parts[0]) == 1)) {
+            if ((isset($parts[0])) && ((int) $parts[0] == 1)) {
                 $this->useOverlayVIA = true;
             }
 
-            if ((isset($parts[1])) && (intval($parts[1]) == 1)) {
+            if ((isset($parts[1])) && ((int) $parts[1] == 1)) {
                 $this->useOverlayRelative = true;
             }
 
-            if ((isset($parts[2])) && (intval($parts[2]) != 0)) {
-                $this->gridSnapValue = intval($parts[2]);
+            if ((isset($parts[2])) && ((int) $parts[2] != 0)) {
+                $this->gridSnapValue = (int) $parts[2];
             }
         }
     }
@@ -912,7 +912,7 @@ class EditorUI extends UIBase
         $value .= ":";
         $value .= ($this->useOverlayRelative ? "1" : "0");
         $value .= ":";
-        $value .= intval($this->gridSnapValue);
+        $value .= (int) $this->gridSnapValue;
 
         setcookie("wmeditor", $value, time() + 60 * 60 * 24 * 30);
     }
@@ -931,13 +931,10 @@ class EditorUI extends UIBase
         if (isset($request['mapname'])) {
             $mapFileName = $request['mapname'];
 
-            if ($action == "newmap" || $action == "newmap_copy") {
-                if (substr($mapFileName, -5, 5) != '.conf' && strlen($mapFileName) > 0) {
-                    $mapFileName .= ".conf";
-
-                    // put it back into the request, so that the validation doesn't fail
-                    $request['mapname'] = $mapFileName;
-                }
+            if (($action == "newmap" || $action == "newmap_copy") && (substr($mapFileName, -5, 5) != '.conf' && strlen($mapFileName) > 0)) {
+                $mapFileName .= ".conf";
+                // put it back into the request, so that the validation doesn't fail
+                $request['mapname'] = $mapFileName;
             }
 
             // If there's something funny with the config filename, just stop.

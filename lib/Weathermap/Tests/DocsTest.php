@@ -75,10 +75,8 @@ class DocsTest extends \PHPUnit_Framework_TestCase
 
         if ($dh = opendir($this->docsRoot)) {
             while (($file = readdir($dh)) !== false) {
-                if (substr($file, -4, 4) == ".xml") {
-                    if (preg_match('/^(node|global|link)_/', $file)) {
-                        $seen[$file] = 0;
-                    }
+                if (substr($file, -4, 4) == ".xml" && preg_match('/^(node|global|link)_/', $file)) {
+                    $seen[$file] = 0;
                 }
             }
             closedir($dh);

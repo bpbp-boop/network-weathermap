@@ -15,7 +15,7 @@ class HTMLImagemapAreaCircle extends HTMLImagemapArea
 
     public function asHTML()
     {
-        $coordstring = join(',', array($this->centx, $this->centy, $this->edgex, $this->edgey));
+        $coordstring = implode(',', array($this->centx, $this->centy, $this->edgex, $this->edgey));
         return '<area ' . $this->commonHTML() . 'shape="circle" coords="' . $coordstring . '" />';
     }
 

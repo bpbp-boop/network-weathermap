@@ -168,11 +168,11 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         if ($fileHandle === false) {
             throw new \Exception("Failed to open summary file: $summaryFileName");
         }
-        fputs(
+        fwrite(
             $fileHandle,
             "<html><head><title>Test summary for $osTag</title><style>img {border: 1px solid black; }</style></head><body><h3>Test Summary for $osTag</h3>(result - reference - diff)<br/>\n"
         );
-        fputs($fileHandle, "<p>" . date("Y-m-d H:i:s") . "</p>\n");
+        fwrite($fileHandle, "<p>" . date("Y-m-d H:i:s") . "</p>\n");
 
         $configList = array();
 
@@ -206,7 +206,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
 
                 $title = TestSupport::getMapTitle(self::$testsDirectory . DIRECTORY_SEPARATOR . $file);
 
-                fputs(
+                fwrite(
                     $fileHandle,
                     sprintf(
                         "<h4>%s <a href=\"tests/%s\">[conf]</a> <em>%s</em></h4><p><nobr>Out:<img align=middle src='%s'> Ref:<img src='%s' align=middle> Diff:<img align=middle src='%s'></nobr></p>\n",
@@ -221,7 +221,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
             }
         }
 
-        fputs($fileHandle, "</body></html>");
+        fwrite($fileHandle, "</body></html>");
         fclose($fileHandle);
 
         return $configList;
@@ -304,7 +304,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         );
 
         foreach ($compares as $c) {
-            if (file_exists($c) and is_executable($c)) {
+            if (file_exists($c) && is_executable($c)) {
                 self::$compare = $c;
                 break;
             }

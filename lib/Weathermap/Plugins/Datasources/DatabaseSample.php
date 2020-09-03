@@ -32,11 +32,7 @@ class DatabaseSample extends Base
 
     public function init(&$map)
     {
-        if (!function_exists("mysql_connect")) {
-            return false;
-        }
-
-        return true;
+        return function_exists("mysql_connect");
     }
 
     /**
@@ -67,7 +63,7 @@ class DatabaseSample extends Base
                 MapUtility::warn($e->getMessage());
             }
 
-            if ($pdo) {
+            if ($pdo !== null) {
                 $statement = $pdo->prepare("SELECT infield, outfield FROM tablename WHERE host=? LIMIT 1");
                 $result = $statement->execute(array($matches[1]));
 

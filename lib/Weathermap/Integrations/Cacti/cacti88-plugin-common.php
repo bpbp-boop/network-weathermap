@@ -25,9 +25,5 @@ function wmCheckTablesExist()
     // since it's apparently becoming a more common issue, just check that the tables
     // actually exist in the database!
     $queryrows = db_fetch_assoc("show table status like 'weathermap%'");
-
-    if (count($queryrows) == 0) {
-        return false;
-    }
-    return true;
+    return count($queryrows) != 0;
 }

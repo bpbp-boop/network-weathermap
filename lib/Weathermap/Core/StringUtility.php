@@ -21,9 +21,8 @@ class StringUtility
         $output = $input;
 
         $output = preg_replace('/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/', '127.0.0.1', $output);
-        $output = preg_replace_callback('/([A-Za-z]{3,})/', array('self', 'stringAnonymiseReplacer'), $output);
 
-        return $output;
+        return preg_replace_callback('/([A-Za-z]{3,})/', array('self', 'stringAnonymiseReplacer'), $output);
     }
 
     // PHP < 5.3 doesn't support anonymous functions, so here's a little function for wmStringAnonymise (screenshotify)
@@ -42,7 +41,7 @@ class StringUtility
 
         // special formatting for time_t (t) and SNMP TimeTicks (T)
         if ($tokenCharacter == 'T') {
-            $value = $value / 100;
+            $value /= 100;
         }
 
         $results = array();
@@ -56,7 +55,7 @@ class StringUtility
 
         foreach ($periods as $periodSuffix => $timePeriod) {
             $slot = floor($value / $timePeriod);
-            $value = $value - $slot * $timePeriod;
+            $value -= $slot * $timePeriod;
 
             if ($slot > 0) {
                 $results [] = sprintf('%d%s', $slot, $periodSuffix);
@@ -163,7 +162,7 @@ class StringUtility
         }
 
         $number = round($number, $precision);
-        $integer = intval($number);
+        $integer = (int) $number;
 
         if (strlen($integer) < strlen($number)) {
             $decimal = substr($number, strlen($integer) + 1);
@@ -207,11 +206,11 @@ class StringUtility
             $places = 2;
             // we don't really need the justification (pre-.) part...
             if ($matches[2] != '') {
-                $places = intval($matches[2]);
+                $places = (int) $matches[2];
             }
             return self::formatNumberWithMetricSuffix($value, $kilo, $places);
         } elseif (preg_match('/%(-*)(\d*)([Tt])/', $format, $matches)) {
-            $precision = ($matches[2] == '' ? 10 : intval($matches[2]));
+            $precision = ($matches[2] == '' ? 10 : (int) $matches[2]);
 
             return self::formatTimeTicks($value, $matches[1], $matches[3], $precision);
         }
@@ -230,9 +229,7 @@ class StringUtility
         $str = str_replace('\\', '\\\\', $str);
         $str = str_replace('"', '\\"', $str);
 
-        $str = '"' . $str . '"';
-
-        return $str;
+        return '"' . $str . '"';
     }
 
     /**

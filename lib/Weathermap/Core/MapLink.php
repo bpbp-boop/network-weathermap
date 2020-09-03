@@ -208,7 +208,7 @@ class MapLink extends MapDataItem
 
         $points [] = $this->endpoints[0]->point;
 
-        MapUtility::debug('POINTS SO FAR:' . join(' ', $points) . "\n");
+        MapUtility::debug('POINTS SO FAR:' . implode(' ', $points) . "\n");
 
         foreach ($this->viaList as $via) {
             MapUtility::debug("VIALIST...\n");
@@ -223,11 +223,11 @@ class MapLink extends MapDataItem
             MapUtility::debug("Adding $point\n");
             $points [] = $point;
         }
-        MapUtility::debug('POINTS SO FAR:' . join(' ', $points) . "\n");
+        MapUtility::debug('POINTS SO FAR:' . implode(' ', $points) . "\n");
 
         $points [] = $this->endpoints[1]->point;
 
-        MapUtility::debug('POINTS SO FAR:' . join(' ', $points) . "\n");
+        MapUtility::debug('POINTS SO FAR:' . implode(' ', $points) . "\n");
 
         if ($points[0]->closeEnough($points[1]) && count($this->viaList) == 0) {
             MapUtility::warn('Zero-length link ' . $this->name . ' skipped. [WMWARN45]');
@@ -328,7 +328,7 @@ class MapLink extends MapDataItem
 
             if ($bwlabelText != '') {
                 MapUtility::debug('Bandwidth for label is ' . StringUtility::valueOrNull($bandwidth) . " (label is '$bwlabelText')\n");
-                $padding = intval($this->getHint('bwlabel_padding'));
+                $padding = (int) $this->getHint('bwlabel_padding');
 
                 // if screenshot_mode is enabled, wipe any letters to X and wipe any IP address to 127.0.0.1
                 // hopefully that will preserve enough information to show cool stuff without leaking info
@@ -500,7 +500,7 @@ class MapLink extends MapDataItem
         $val = $this->usescale . ' ' . $this->scaletype;
         $comparison = $templateSource->usescale . ' ' . $templateSource->scaletype;
 
-        if (($val != $comparison)) {
+        if (($val !== $comparison)) {
             $output .= "\tUSESCALE " . $val . "\n";
         }
 
@@ -548,7 +548,7 @@ class MapLink extends MapDataItem
 
         foreach ($dirs as $dir => $tdir) {
             if ($this->overliburl[$dir] != $templateSource->overliburl[$dir]) {
-                $output .= "\t" . $tdir . 'OVERLIBGRAPH ' . join(' ', $this->overliburl[$dir]) . "\n";
+                $output .= "\t" . $tdir . 'OVERLIBGRAPH ' . implode(' ', $this->overliburl[$dir]) . "\n";
             }
         }
 
@@ -588,13 +588,13 @@ class MapLink extends MapDataItem
 
         $comparison = $templateSource->commentOffsets[IN] . ':' . $templateSource->commentOffsets[OUT];
         $mine = $this->commentOffsets[IN] . ':' . $this->commentOffsets[OUT];
-        if ($mine != $comparison) {
+        if ($mine !== $comparison) {
             $output .= "\tCOMMENTPOS " . $this->commentOffsets[IN] . ' ' . $this->commentOffsets[OUT] . "\n";
         }
 
         $comparison = $templateSource->targets;
 
-        if ($this->targets != $comparison) {
+        if ($this->targets !== $comparison) {
             $output .= "\tTARGET";
 
             foreach ($this->targets as $target) {
@@ -829,8 +829,8 @@ class MapLink extends MapDataItem
 
         // nudge pushes the comment out along the link arrow a little bit
         // (otherwise there are more problems with text disappearing underneath links)
-        $nudgeAlong = intval($this->getHint('comment_nudgealong'));
-        $nudgeOut = intval($this->getHint('comment_nudgeout'));
+        $nudgeAlong = (int) $this->getHint('comment_nudgealong');
+        $nudgeOut = (int) $this->getHint('comment_nudgeout');
 
         /** @var Point $position */
         list ($position, $commentIndex, $angle, $distance) = $this->geometry->findPointAndAngleAtPercentageDistance($this->commentOffsets[$direction]);

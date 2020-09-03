@@ -32,12 +32,7 @@ function weathermap_page_title($t)
             $cactiInterface = new Weathermap\Integrations\Cacti\CactiApplicationInterface($pdo);
             $manager = new Weathermap\Integrations\MapManager($pdo, "", $cactiInterface);
 
-            // TODO: Should numeric ID ever happen?
-            if (preg_match('/^\d+$/', $mapid)) {
-                $title = $manager->getMapTitle($mapid);
-            } else {
-                $title = $manager->getMapTitleByHash($mapid);
-            }
+            $title = preg_match('/^\d+$/', $mapid) ? $manager->getMapTitle($mapid) : $manager->getMapTitleByHash($mapid);
             if (isset($title)) {
                 $t .= " - $title";
             }
@@ -71,13 +66,9 @@ function weathermap_show_tab()
     global $config, $user_auth_realm_filenames;
 
     if (api_plugin_user_realm_auth('weathermap-cacti10-plugin.php')) {
-        $tabstyle = intval(read_config_option('superlinks_tabstyle'));
+        $tabstyle = (int) read_config_option('superlinks_tabstyle');
 
-        if ($tabstyle > 0) {
-            $prefix = 's_';
-        } else {
-            $prefix = '';
-        }
+        $prefix = $tabstyle > 0 ? 's_' : '';
         $tabName = $prefix . 'tab_weathermap.gif';
         $weathermapBaseURL = $config['url_path'] . 'plugins/weathermap';
         $weathermapURL = $weathermapBaseURL . '/weathermap-cacti10-plugin.php';
@@ -209,11 +200,7 @@ function weathermap_config_settings()
             )
         )
     );
-    if (isset($settings['weathermap'])) {
-        $settings['weathermap'] = array_merge($settings['weathermap'], $temp);
-    } else {
-        $settings['weathermap'] = $temp;
-    }
+    $settings['weathermap'] = isset($settings['weathermap']) ? array_merge($settings['weathermap'], $temp) : $temp;
 }
 
 function weathermap_draw_navigation_text($nav)

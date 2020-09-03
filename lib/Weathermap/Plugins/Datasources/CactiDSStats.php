@@ -167,7 +167,7 @@ class CactiDSStats extends Base
             $keyfield = "data_source_name";
         }
 
-        if ($table != "" and $field != "") {
+        if ($table != "" && $field != "") {
             $SQL = sprintf(
                 "select %s as name, %s as result from %s where local_data_id=%d and (%s=%s or %s=%s)",
                 $keyfield,

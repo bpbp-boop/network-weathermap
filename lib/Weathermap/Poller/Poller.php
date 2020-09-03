@@ -56,7 +56,7 @@ class Poller
 
         $this->pollerStartTime = $pollerStartTime;
         if ($pollerStartTime == 0) {
-            $this->pollerStartTime = intval($this->startTime);
+            $this->pollerStartTime = (int) $this->startTime;
         }
     }
 
@@ -85,7 +85,7 @@ class Poller
         }
 
         // next, make sure that we stand a chance of writing files
-        if (!$this->testWritable($this->outputDirectory)) {
+        if ($this->testWritable($this->outputDirectory) === '') {
             MapUtility::warn("Output directory ($this->outputDirectory) isn't writable (tried to create a file). No maps created. You probably need to make it writable by the poller process user$userNote (like you did with the RRA directory) [WMPOLL06]\n");
             $this->totalWarnings++;
             $this->warningNotes .= " (Permissions problem prevents any maps running - check cacti.log for WMPOLL06)";
